@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <title>White</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="shortcut icon" href="favicon.ico" />
         <link type="text/css" rel="stylesheet" href="cdn/js/bootstrap/3.0.0/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" href="cdn/css/siamnet/default.css" />
     </head>
