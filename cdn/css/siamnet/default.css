@@ -1,0 +1,49 @@
+@font-face {
+    font-family:'everson';
+    src: url('everson_mono_latin.ttf');
+}
+
+body {
+    font-family:'everson', monospace ! important;
+}
+
+.wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-input, .wt-list-item-text {
+    width:100%;
+    margin:0px;
+    padding:4px 8px;
+}
+
+.wt-list-wrapper {
+}
+
+.wt-list {
+}
+
+.wt-list-item {
+}
+
+.wt-list-item-input {
+    border:0px;
+}
+
+.wt-list-item-text {
+}
+
+.wt-list-item-chk-done, .wt-list-item-chk-strike {
+    vertical-align:middle;
+}
+
+.wt-list-item-chk-done {
+    margin-right:8px ! important;
+}
+
+.wt-list-item-chk-strike {
+    margin-right:8px ! important;
+}
+
+.wt-strike {
+    text-decoration:line-through;
+}
+
+.wt-text {
+}
