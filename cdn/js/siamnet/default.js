@@ -1,6 +1,14 @@
 var tmpid = 42;
 var list = "public";
 
+// start: websocket config
+var connected = false;
+var reConnecting = false;
+var room = "";
+var username = "";
+var conn = null;
+// end: websocket config
+
 var p = function(str) {
     "use strict"
     console.log(str);
@@ -27,12 +35,15 @@ var saveText = function(id, text) {
                     + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + json.id 
                     + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
                     + "\">" + text + "</span></p></div>");
+            conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
             applyEditItem(json.id);
             applyRemoveItem(json.id);
             applyStrikeItem(json.id);
             applySaveTextOfItem(json.id);
             applySaveOnEnter(json.id);
             applyTooltip();
+        } else {
+            conn.send(JSON.stringify({"a": "message", "actiontype": "save", "list": list, "text": text, "id": json.id}));
         }
     });
 };
@@ -59,6 +70,7 @@ var applyRemoveItem = function(id) {
         $.getJSON("ajax.php?a=delete&id=" + id 
                 + "&list=" + encodeURIComponent(list), function(json) {
             $("#wt-list-item-" + id).remove();
+            conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
     });
 };
@@ -79,6 +91,8 @@ var applyStrikeItem = function(id) {
             } else {
                 text.removeClass("wt-strike");
             }
+
+            conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
         });
     });
 };
@@ -151,10 +165,12 @@ var init = function() {
     switch(hashVars[1]) {
         case "list":
             list = hashVars[2];
+            startConnection(list);
             load(list);
             break;
         default:
             list = "public";
+            startConnection(list);
             load(list);
     }
 };
@@ -189,6 +205,114 @@ var load = function(list) {
     });
 };
 
+function handleMessage(json) {
+    "use strict";
+    console.log("websocket: handleMessage: json: " + json);
+    var jsonObj = JSON.parse(json);
+    if (jsonObj.a === "message" && jsonObj.list === list) {
+        console.log("websocket: You got the right list.");
+        if (jsonObj.actiontype === "strike") {
+            console.log("websocket: Striking item");
+            var text = $("#wt-text-" + jsonObj.id);
+            if (jsonObj.strike) {
+                text.addClass("wt-strike");
+            } else {
+                text.removeClass("wt-strike");
+            }
+            $("#wt-list-item-chk-strike-" + jsonObj.id).prop("checked", jsonObj.strike);
+        } else if (jsonObj.actiontype === "remove") {
+            $("#wt-list-item-" + jsonObj.id).remove();
+        } else if (jsonObj.actiontype === "add") {
+            $("#wt-list-item-0").after("<div id=\"wt-list-item-" + jsonObj.id 
+                    + "\" class=\"wt-list-item\" data-id=\"" + jsonObj.id 
+                    + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
+                    + jsonObj.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + jsonObj.id 
+                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + jsonObj.id 
+                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + jsonObj.id 
+                    + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
+                    + "\">" + jsonObj.text + "</span></p></div>");
+            applyEditItem(jsonObj.id);
+            applyRemoveItem(jsonObj.id);
+            applyStrikeItem(jsonObj.id);
+            applySaveTextOfItem(jsonObj.id);
+            applySaveOnEnter(jsonObj.id);
+            applyTooltip();
+        } else if (jsonObj.actiontype === "save") {
+            $("#wt-list-item-" + jsonObj.id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
+                    + jsonObj.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + jsonObj.id 
+                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + jsonObj.id 
+                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + jsonObj.id 
+                    + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
+                    + "\">" + jsonObj.text + "</span></p>");
+            applyEditItem(jsonObj.id);
+            applyRemoveItem(jsonObj.id);
+            applyStrikeItem(jsonObj.id);
+            applySaveTextOfItem(jsonObj.id);
+            applySaveOnEnter(jsonObj.id);
+            applyTooltip();
+        }
+    }
+}
+
+function loginToRoom(room, username) {
+    "use strict";
+    console.log("websocket: loginToRoom");
+    try {
+        console.log("websocket: Starting try");
+        var request = {"a": "login", "room": room};
+        console.log("websocket: Trying to login: " + request);
+        conn.send(JSON.stringify(request));
+    } catch (ex) {
+    }
+}
+
+function startConnection(list) {
+    "use strict";
+    if (!connected) {
+        conn = new WebSocket(webSocketUrl);
+        console.log("websocket: Just made connection object.");
+
+        conn.onopen = function(e) {
+            console.log("websocket: onopen");
+            connected = true;
+            reConnecting = false;
+            loginToRoom(list);
+        };
+
+        conn.onclose = function(e) {
+            console.log("websocket: onclose");
+            connected = false;
+            if (!reConnecting) {
+                reConnect();
+            }
+        };
+
+        conn.onerror = function(e) {
+            console.log("websocket: onerror");
+            connected = false;
+            if (!reConnecting) {
+                reConnect();
+            }
+        };
+
+        conn.onmessage = function(e) {
+            console.log("websocket: onmessage");
+            handleMessage(e.data);
+        };
+    } else {
+        loginToRoom(list);
+    }
+}
+
+function reConnect() {
+    "use strict";
+    reConnecting = true;
+    if (!connected) {
+        init();
+        setTimeout(reConnect, 2000);
+    }
+}
+
 $(document).ready(function(){
 
     init();
@@ -201,32 +325,5 @@ $(document).ready(function(){
 
     applySaveTextOfItem(0);
     applySaveOnEnter(0);
-
-    /*
-    (function pollForChanges() {
-        $.getJSON("ajax.php?a=poll", function(json) {
-            if ("ids" in json) {
-                $.each(json.ids, function(i, item) {
-                    var id = item.id;
-                    var action = item.action;
-                    if (action === "save") {
-                    } else if (action === "delete") {
-                    } else if (action === "strike-true") {
-                        p("test: " + $("#wt-list-item-chk-strike-" + id).is(":checked"));
-                        if (!$("#wt-list-item-chk-strike-" + id).is(":checked")) {
-                            $("#wt-list-item-chk-strike-" + id).prop("checked", true);
-                        }
-                    } else if (action === "strike-false") {
-                        if ($("#wt-list-item-chk-strike-" + id).is(":checked")) {
-                            $("#wt-list-item-chk-strike-" + id).prop("checked", false);
-                        }
-                    }
-                    console.log(json.status + ", " + id + ", " + action);
-                });
-            }
-            pollForChanges();
-        });
-    })();
-    */
 
 });

@@ -1,14 +1,12 @@
 <?php
 
+session_start();
+$sessid = session_id();
+
 $mongo = new Mongo("localhost:27017");
 
-// Saves write to this file and long polling detects the
-// changes and sends them immediately to the client. This
-// Keeps multiple clients in sync.
-//$pollFile = "/tmp/white-changes.txt";
-
 // Set to something below your web server timeout.
-//$timeout = 10;
+$timeout = 3;
 
 function getTime() {
     return date("Y-m-d H:i:s") . microtime();
@@ -76,11 +74,58 @@ if ($_GET['a'] === "load") {
     $mongoId = new MongoID(toMongoId($id));
     $items->update(array("_id"=>$mongoId), array('$set' => array("strike"=>$strike)));
 
+    $pollQueue = $mongo->white->queue;
     //file_put_contents($pollFile, toMongoId($id) . ":strike-{$strikejson}\n", FILE_APPEND);
+    //$pollQueue->update(array("sessid"=>$sessid, "list"=>$_GET['list']), 
+    //        array('$set'=>array("list"=>$_GET['list'], "action"=>"strike-{$strikejson}", "timestamp"=>date("U"))), 
+    //        array("upsert"=>true));
 
     print(json_encode(array("status"=>"ok", "msg"=>"Striked item.")));
 
+} else if ($_GET['a'] === "clear-poll-queue") {
+
+    $pollQueue = $mongo->white->queue;
+    $pollQueue->remove(array("sessid"=>$sessid, "list"=>$_GET['list']));
+    print(json_encode(array("status"=>"ok", "msg"=>"Poll queue cleared.")));
+
 } else if ($_GET['a'] === "poll") {
+
+    /*
+    $start = date("U");
+
+    $pollQueue = $mongo->white->queue;
+    $pollUsers = $mongo->white->queueUsers;
+
+    // Update your poll time. This is how we determine a client has left.
+    $pollUsers->update(array("sessid"=>$sessid), 
+            array('$set'=>array("timestamp"=>date("U"))), array("upsert"=>true));
+
+    $pollTimeout = date("U") + (2 * $timeout);
+    $data = array("sessid"=>array('$ne'=>$sessid), "list"=>$_GET['list']);//, "timestamp"=>array('$lt'=>$pollTimeout));
+    $mr = $pollQueue->find($data)->sort(array("timestamp" => 1));
+
+    while ($mr->count() < 1) {
+        if (date("U") - $start > $timeout) {
+            print(json_encode(array("status"=>"continue", "msg"=>"No changes.", "list"=>$_GET['list']))); 
+            die();
+        }
+        sleep(1);
+        unset($mr);
+        $mr = $pollQueue->find($data)->sort(array("timestamp" => 1));
+    }
+
+    $queue = array();
+    while ($mr->hasNext()) {
+        $item = $mr->getNext();
+        $queue[] = array("id"=>toHtmlId($item['_id']->{'$id'}), 
+                "action"=>$item['action'], "list"=>$_GET['list']);
+    }
+
+    $pollQueue->remove(array("sessid"=>$sessid, "list"=>$_GET['list']));
+    print(json_encode(array("status"=>"ok", "msg"=>"Detected changes.", "ids"=>$queue))); 
+    sleep(5);
+    die();
+    */
 
     /*
     $start = date("U");

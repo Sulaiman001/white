@@ -20,6 +20,7 @@
         </div>
         <script src="cdn/js/jquery/1.10.2/jquery-1.10.2.min.js"></script>
         <script src="cdn/js/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <script src="cdn/js/siamnet/config.js"></script>
         <script src="cdn/js/siamnet/default.js"></script>
     </body>
 </html>
