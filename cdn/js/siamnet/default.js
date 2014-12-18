@@ -1,8 +1,5 @@
 var tmpid = 42;
-
-function random(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
-}
+var list = "public";
 
 var p = function(str) {
     "use strict"
@@ -20,7 +17,7 @@ var strikeTitle = function() {
 var saveText = function(id, text) {
     "use strict"
     $.getJSON("ajax.php?a=save&id=" + id + "&text=" 
-            + encodeURIComponent(text), function(json) {
+            + encodeURIComponent(text) + "&list=" + encodeURIComponent(list), function(json) {
         if (id === null) {
             $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
                     + "\" class=\"wt-list-item\" data-id=\"" + json.id 
@@ -59,7 +56,8 @@ var applyRemoveItem = function(id) {
     // Remove an item
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
-        $.getJSON("ajax.php?a=delete&id=" + id, function(json) {
+        $.getJSON("ajax.php?a=delete&id=" + id 
+                + "&list=" + encodeURIComponent(list), function(json) {
             $("#wt-list-item-" + id).remove();
         });
     });
@@ -74,7 +72,8 @@ var applyStrikeItem = function(id) {
         if (!text.hasClass("wt-strike")) {
             strike = true;
         }
-        $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike, function(json) {
+        $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike 
+                + "&list=" + encodeURIComponent(list), function(json) {
             if (strike) {
                 text.addClass("wt-strike");
             } else {
@@ -139,12 +138,30 @@ var applySaveOnEnter = function(id) {
 };
 
 var applyTooltip = function() {
-    $(".btn-tooltip").tooltip();
+    if (!(/iPhone|iPod|iPad|Android|BlackBerry|phone/i).test(navigator.userAgent)) {
+        $(".btn-tooltip").tooltip();
+    }
 };
 
-$(document).ready(function(){
+var init = function() {
+    "use strict";
+    var hash = window.location.hash;
+    hash = hash.replace(/^#/, "");
+    var hashVars = hash.split("/");
+    switch(hashVars[1]) {
+        case "list":
+            list = hashVars[2];
+            load(list);
+            break;
+        default:
+            list = "public";
+            load(list);
+    }
+};
 
-    $.getJSON("ajax.php?a=load", function(json) {
+var load = function(list) {
+    $(".wt-list-item").remove();
+    $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list), function(json) {
         var previd = 0;
         $.each(json.items, function(i, item) {
             var id = item.id;
@@ -170,10 +187,46 @@ $(document).ready(function(){
             previd = id;
         });
     });
+};
+
+$(document).ready(function(){
+
+    init();
+
+    $(window).on("hashchange", function() { 
+        init();
+    });
 
     $(".wt-list-item-input:first").focus();
 
     applySaveTextOfItem(0);
     applySaveOnEnter(0);
+
+    /*
+    (function pollForChanges() {
+        $.getJSON("ajax.php?a=poll", function(json) {
+            if ("ids" in json) {
+                $.each(json.ids, function(i, item) {
+                    var id = item.id;
+                    var action = item.action;
+                    if (action === "save") {
+                    } else if (action === "delete") {
+                    } else if (action === "strike-true") {
+                        p("test: " + $("#wt-list-item-chk-strike-" + id).is(":checked"));
+                        if (!$("#wt-list-item-chk-strike-" + id).is(":checked")) {
+                            $("#wt-list-item-chk-strike-" + id).prop("checked", true);
+                        }
+                    } else if (action === "strike-false") {
+                        if ($("#wt-list-item-chk-strike-" + id).is(":checked")) {
+                            $("#wt-list-item-chk-strike-" + id).prop("checked", false);
+                        }
+                    }
+                    console.log(json.status + ", " + id + ", " + action);
+                });
+            }
+            pollForChanges();
+        });
+    })();
+    */
 
 });

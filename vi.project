@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vi index.php cdn/css/siamnet/default.css cdn/js/siamnet/default.js ajax.php README.md

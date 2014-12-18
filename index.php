@@ -12,14 +12,9 @@
         <div class="container">
             <div class="wt-list-wrapper">
                 <div class="wt-list">
-                    <div id="wt-list-item-0" class="wt-list-item" data-id="0">
+                    <div id="wt-list-item-0" class="wt-list-item-first" data-id="0">
                         <input class="wt-list-item-input" type="text" id="wt-list-item-input-0" data-id="0" placeholder="Enter new item here" /> 
                     </div>
-                    <!--
-                    <div id="wt-list-item-1" class="wt-list-item" data-id="1">
-                        <p class="wt-list-item-text"><input type="checkbox" data-id="1" class="wt-list-item-chk-done" id="wt-list-item-chk-done-1" /> <input type="checkbox" data-id="1" class="wt-list-item-chk-strike" id="wt-list-item-chk-strike-1" checked="checked" /> <span id="wt-text-1" class="wt-text wt-strike" data-id="1">Fix KMS notifications.</span></p>
-                    </div>
-                    -->
                 </div>
             </div>
         </div>
