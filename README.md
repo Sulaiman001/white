@@ -27,16 +27,16 @@ bin/run.sh
 
 Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet server settings.
 
-Copy `www/cdn/js/example.config.js` to `www/cdn/js/config.js` and update the JavaScript settings.
+Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
 
 Setup Stunnel for SSL encryption for secure web sockets
 ========================================================
 
-The `www/cdn/js/example.config.js` file defaults to the `ws://` protocol on port 9880.
+The `www/js/example.config.js` file defaults to the `ws://` protocol on port 9880.
 
-The port used in `bin/example.config.php` and `www/cdn/js/example.config.js` are both 9880.
+The port used in `bin/example.config.php` and `www/js/example.config.js` are both 9880.
 
-When you switch to using a secure websocket with protocol `wss://` you will need to change the port in `www/cdn/js/example.config.js` to 9443 if using the stunnel configuration below. On many machines edit `/etc/stunnel/stunnel.conf` and add the following. You'll need to generate a certificate if you don't have one. You can get free SSL certificates from sites like startssl.com.
+When you switch to using a secure websocket with protocol `wss://` you will need to change the port in `www/js/example.config.js` to 9443 if using the stunnel configuration below. On many machines edit `/etc/stunnel/stunnel.conf` and add the following. You'll need to generate a certificate if you don't have one. You can get free SSL certificates from sites like startssl.com.
 
     cert = /etc/apache2/ssl/cert.pem
 

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-vi index.php cdn/css/siamnet/default.css cdn/js/siamnet/default.js ajax.php README.md src/White/White.php bin/white-server.php bin/config.php bin/example.config.php bin/run.s cdn/js/siamnet/config.js cdn/js/siamnet/example.config.js
+vi index.php css/white.css js/white.js ajax.php README.md src/White/White.php bin/white-server.php bin/config.php bin/example.config.php bin/run.s js/config.js js/example.config.js

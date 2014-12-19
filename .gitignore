@@ -2,3 +2,4 @@ vendor/
 composer.lock
 config.js
 config.php
+compile_js.bash
