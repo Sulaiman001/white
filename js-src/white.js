@@ -21,6 +21,10 @@ var strikeTitle = function() {
     return "Strike out item";
 }
 
+var escapeHtml = function(html) {
+    return jQuery("<div/>").text(html).html();
+};
+
 var saveText = function(id, text) {
     "use strict"
     $.getJSON("ajax.php?a=save&id=" + id + "&text=" 
@@ -33,7 +37,7 @@ var saveText = function(id, text) {
                     + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + json.id 
                     + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + json.id 
                     + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
-                    + "\">" + text + "</span></p></div>");
+                    + "\">" + escapeHtml(text) + "</span></p></div>");
             conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
             applyEditItem(json.id);
             applyRemoveItem(json.id);
@@ -55,8 +59,8 @@ var applyEditItem = function(id) {
         var clickedText = $("#wt-text-" + id).text();
         $("#wt-list-item-" + id)
                 .html("<input class=\"wt-list-item-input\" type=\"text\" id=\"wt-list-item-input-" 
-                    + id + "\" data-id=\"" + id + "\" placeholder=\"Enter new item here\" value=\"" 
-                    + clickedText + "\"/>");
+                    + id + "\" data-id=\"" + id + "\" placeholder=\"Enter new item here\" />");
+        $("#wt-list-item-input-" + id).val(clickedText);
         $("#wt-list-item-input-" + id).focus();
         applySaveTextOfItem(id);
         applySaveOnEnter(id);
@@ -140,7 +144,7 @@ var doApplySaveOnEnter = function(thiz, e) {
                 + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
                 + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
                 + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
-                + "\">" + text + "</span></p>");
+                + "\">" + escapeHtml(text) + "</span></p>");
         applyEditItem(id);
         applyRemoveItem(id);
         applyStrikeItem(id);
@@ -211,7 +215,7 @@ var load = function(list) {
                         + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
                         + "\" " + checked + " title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" 
                         + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
-                        + "\">" + text + "</span></p></div>");
+                        + "\">" + escapeHtml(text) + "</span></p></div>");
             applyEditItem(id);
             applyRemoveItem(id);
             applyStrikeItem(id);

@@ -3,3 +3,4 @@ composer.lock
 config.js
 config.php
 compile_js.bash
+compile_js.php
