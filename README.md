@@ -7,7 +7,7 @@ Update the MongoDB URL at the top of `ajax.php` and open `index.php` in a browse
 
 List support provide by appending #/list/{listname} to URLs.
 
-Example: `https://www.example.com/white/#/list/stuff-to-remember`
+Example: `https://www.example.com/white/www/#/list/stuff-to-remember`
 
 INSTALL
 =======
