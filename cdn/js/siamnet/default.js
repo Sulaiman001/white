@@ -177,6 +177,7 @@ var init = function() {
 
 var load = function(list) {
     $(".wt-list-item").remove();
+    $("title").text("#" + list);
     $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list), function(json) {
         var previd = 0;
         $.each(json.items, function(i, item) {
