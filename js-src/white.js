@@ -1,4 +1,3 @@
-var tmpid = 42;
 var list = "public";
 
 // start: websocket config
@@ -124,13 +123,14 @@ var applySaveTextOfItem = function(id) {
 };
 
 var doApplySaveOnEnter = function(thiz, e) {
-    if (editing) {
+    if (editing || $("#wt-list-item-input-0").is(":focus")) {
         editing = false;
     } else {
         return;
     }
     e.preventDefault();
     var id = thiz.data("id");
+    console.log("id: " + id);
     var text = $("#wt-list-item-input-" + id).val();
     if (id === 0) {
         saveText(null, text);
@@ -150,7 +150,7 @@ var doApplySaveOnEnter = function(thiz, e) {
         saveText(id, text);
     }
 
-    $(this).val("");
+    thiz.val("");
 }
 
 var applySaveOnEnter = function(id) {
