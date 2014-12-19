@@ -48,8 +48,10 @@ var saveText = function(id, text) {
     });
 };
 
+var editing = false;
 var applyEditItem = function(id) {
     $("#wt-text-" + id).on("click", function() {
+        editing = true;
         var id = $(this).data("id");
         var clickedText = $("#wt-text-" + id).text();
         $("#wt-list-item-" + id)
@@ -121,32 +123,45 @@ var applySaveTextOfItem = function(id) {
     });
 };
 
+var doApplySaveOnEnter = function(thiz, e) {
+    if (editing) {
+        editing = false;
+    } else {
+        return;
+    }
+    e.preventDefault();
+    var id = thiz.data("id");
+    var text = $("#wt-list-item-input-" + id).val();
+    if (id === 0) {
+        saveText(null, text);
+    } else {
+        $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
+                + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
+                + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
+                + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
+                + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
+                + "\">" + text + "</span></p>");
+        applyEditItem(id);
+        applyRemoveItem(id);
+        applyStrikeItem(id);
+        applySaveTextOfItem(id);
+        applySaveOnEnter(id);
+        applyTooltip();
+        saveText(id, text);
+    }
+
+    $(this).val("");
+}
+
 var applySaveOnEnter = function(id) {
     // Hitting tener on item removes text input and saves item
     $("#wt-list-item-input-" + id).keypress(function (e) {
+        var thiz = $(this);
+        thiz.on("blur", function() {
+            doApplySaveOnEnter(thiz, e);
+        });
         if (e.which == 13) {
-            e.preventDefault();
-            var id = $(this).data("id");
-            var text = $("#wt-list-item-input-" + id).val();
-            if (id === 0) {
-                saveText(null, text);
-            } else {
-                $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
-                        + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
-                        + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
-                        + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
-                        + "\">" + text + "</span></p>");
-                applyEditItem(id);
-                applyRemoveItem(id);
-                applyStrikeItem(id);
-                applySaveTextOfItem(id);
-                applySaveOnEnter(id);
-                applyTooltip();
-                saveText(id, text);
-            }
-
-            $(this).val("");
+            doApplySaveOnEnter(thiz, e);
         }
     });
 };

@@ -21,6 +21,6 @@
         <script src="js/jquery-1.10.2.min.js"></script>
         <script src="js/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <script src="js/config.js"></script>
-        <script src="js/white.js"></script>
+        <script src="js/white.min.js"></script>
     </body>
 </html>
