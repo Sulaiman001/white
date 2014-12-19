@@ -1,6 +1,6 @@
 <?php
 
-require_once("bin/config.php");
+require_once("../bin/config.php");
 
 $cfg['mongoDatabase'] = "white";
 $mongo = new Mongo($cfg['mongoHost']);

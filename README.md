@@ -1,9 +1,7 @@
 white
 =====
 
-A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, PHP and MongoDB.
-
-Update the MongoDB URL at the top of `ajax.php` and open `index.php` in a browser.
+A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
 
 List support provide by appending #/list/{listname} to URLs.
 
@@ -25,9 +23,11 @@ cd /path/to/white
 bin/run.sh
 ```
 
-Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet server settings.
+Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet and MongoDB settings.
 
 Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
+
+Open `www/index.php` in a browser.
 
 Setup Stunnel for SSL encryption for secure web sockets
 ========================================================
