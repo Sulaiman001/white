@@ -89,15 +89,20 @@ var applyStrikeItem = function(id) {
         if (!text.hasClass("wt-strike")) {
             strike = true;
         }
+        if (strike) {
+            text.addClass("wt-strike");
+        } else {
+            text.removeClass("wt-strike");
+        }
         $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike 
                 + "&list=" + encodeURIComponent(list), function(json) {
-            if (strike) {
-                text.addClass("wt-strike");
-            } else {
-                text.removeClass("wt-strike");
-            }
-
             conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
+        }).fail(function() {
+            if (strike) {
+                text.removeClass("wt-strike");
+            } else {
+                text.addClass("wt-strike");
+            }
         });
     });
 };
