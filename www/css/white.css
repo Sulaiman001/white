@@ -22,6 +22,10 @@ body {
 .wt-list-item {
 }
 
+.wt-list-item:hover {
+    background-color:#f4f2ab;
+}
+
 .wt-list-item-input {
     border:0px;
 }
