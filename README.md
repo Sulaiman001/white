@@ -1,27 +1,47 @@
-weight-tracker
-==============
+white
+=====
 
-A simple weight tracker for marking meals or snacks throughout the day.
+A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
 
-Dependencies
-============
+List support provide by appending #/list/{listname} to URLs.
 
-* HTML, CSS, JavaScript
-* PHP
-* MongoDB
+Example: `https://www.example.com/white/www/#/list/stuff-to-remember`
 
-Configuration
-=============
+INSTALL
+=======
 
-All data is stored in a mongo database. Host and database should be set in `ajax.php` towards the top of the file.
+Install composer dependencies, or `update` if upgrading white.
 
-To add or remove food items just add or remove the buttons in `index.html`.
+```bash
+composer.phar install
+```
 
-e.g. `<button data-type="snoopy-one" type="button" class="btn btn-primary btn-md">snoopy</button>`
+Run white websocket server. Edit the `bindir` variable to point to the `bin` directory in the file `bin/run.sh`. Then execute the `bin/run.sh` script.
 
-The `data-type` attributes must be unique. They must also have at least the class `btn`.
+```bash
+cd /path/to/white
+bin/run.sh
+```
 
-Screenshot
-==========
+Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet and MongoDB settings.
 
-<a target="_blank" href="screen.png"><img src="screen.png" alt="screenshot" /></a>
+Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
+
+Open `www/index.php` in a browser.
+
+Setup Stunnel for SSL encryption for secure web sockets
+========================================================
+
+The `www/js/example.config.js` file defaults to the `ws://` protocol on port 9880.
+
+The port used in `bin/example.config.php` and `www/js/example.config.js` are both 9880.
+
+When you switch to using a secure websocket with protocol `wss://` you will need to change the port in `www/js/example.config.js` to 9443 if using the stunnel configuration below. On many machines edit `/etc/stunnel/stunnel.conf` and add the following. You'll need to generate a certificate if you don't have one. You can get free SSL certificates from sites like startssl.com.
+
+    cert = /etc/apache2/ssl/cert.pem
+
+    [white]
+    accept = YOUR_PUBLIC_IP_ADDRESS:9443
+    connect = 127.0.0.1:9880
+
+Restart stunnel.
