@@ -6,6 +6,11 @@ var reConnecting = false;
 var room = "";
 var username = "";
 var conn = null;
+var autolinker = new Autolinker({
+    stripPrefix: false,
+    truncate: 16,
+    newWindow: true
+});
 // end: websocket config
 
 var p = function(str) {
@@ -22,7 +27,7 @@ var strikeTitle = function() {
 }
 
 var escapeHtml = function(html) {
-    return jQuery("<div/>").text(html).html();
+    return autolinker.link(jQuery("<div/>").text(html).html());
 };
 
 var saveText = function(id, text) {
