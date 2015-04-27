@@ -8,7 +8,7 @@ var username = "";
 var conn = null;
 var autolinker = new Autolinker({
     stripPrefix: false,
-    truncate: 16,
+    //truncate: 32,
     newWindow: true
 });
 // end: websocket config
