@@ -107,6 +107,14 @@ var applyStrikeItem = function(id) {
         }
         $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike 
                 + "&list=" + encodeURIComponent(list), function(json) {
+            var item = $("#wt-list-item-" + id);
+
+            if (strike) {
+                $(".wt-list-item:last").after(item);
+            } else if ($(".wt-strike").size() > 0) {
+                $(".wt-strike:first").parent().parent().before(item);
+            }
+
             conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
         }).fail(function() {
             if (strike) {

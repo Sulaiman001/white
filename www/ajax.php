@@ -33,8 +33,8 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
 } else if (isset($_GET['a']) && $_GET['a'] === "load") {
 
     $items = $mongo->{$cfg['mongoDatabase']}->items;
-    $data = array("list"=>$_GET['list']);
-    $mr = $items->find($data)->sort(array("timestamp" => -1));
+    $data = array("list"=>$_GET['list'], "deleted"=>false);
+    $mr = $items->find($data)->sort(array("strike" => 1, "timestamp" => -1));
     $items = array();
     while ($mr->hasNext()) {
         $item = $mr->getNext();
@@ -54,7 +54,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     $item = array("text"=>$_GET['text']);
     if (isset($_GET['a']) && $id === null || $id === "null") {
         $data = array("text"=>$_GET['text'], "strike"=>false, 
-                "list"=>$_GET['list'], "timestamp"=>getTime());
+                "list"=>$_GET['list'], "deleted"=>false, "timestamp"=>getTime());
         $items->insert($data);
         $id = toHtmlId($data['_id']->{'$id'});
     } else {
@@ -70,7 +70,8 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $mongoId = new MongoID(toMongoId($id));
-    $items->remove(array("_id"=>$mongoId));
+    //$items->remove(array("_id"=>$mongoId));
+    $items->update(array("_id"=>$mongoId), array('$set' => array("deleted"=>true)));
 
     print(json_encode(array("status"=>"ok", "msg"=>"Deleted item.")));
     die();
