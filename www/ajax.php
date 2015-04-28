@@ -46,7 +46,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
             "msg"=>"All items returned successfully.", "items"=>$items)));
     die();
 
-} else if (isset($_GET['a']) && $_GET['a'] === "save") {
+} else if (isset($_GET['a']) && $_GET['a'] === "save" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
 
     $id = $_GET['id'];
     $text = $_GET['text'];
@@ -65,7 +65,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     print(json_encode(array("status"=>"ok", "msg"=>"Saved item.", "id"=>$id)));
     die();
 
-} else if (isset($_GET['a']) && $_GET['a'] === "delete") {
+} else if (isset($_GET['a']) && $_GET['a'] === "delete" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
 
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
@@ -77,7 +77,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     print(json_encode(array("status"=>"ok", "msg"=>"Deleted item.")));
     die();
 
-} else if (isset($_GET['a']) && $_GET['a'] === "strike") {
+} else if (isset($_GET['a']) && $_GET['a'] === "strike" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
 
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
@@ -91,7 +91,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     print(json_encode(array("status"=>"ok", "msg"=>"Striked item.")));
     die();
 
-} else if (isset($_GET['a']) && $_GET['a'] === "clear-poll-queue") {
+} else if (isset($_GET['a']) && $_GET['a'] === "clear-poll-queue" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
 
     $pollQueue = $mongo->{$cfg['mongoDatabase']}->queue;
     $pollQueue->remove(array("sessid"=>$sessid, "list"=>$_GET['list']));

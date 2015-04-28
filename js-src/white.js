@@ -36,7 +36,8 @@ var escapeHtml = function(html) {
 var saveText = function(id, text) {
     "use strict"
     $.getJSON("ajax.php?a=save&id=" + id + "&text=" 
-            + encodeURIComponent(text) + "&list=" + encodeURIComponent(list), function(json) {
+            + encodeURIComponent(text) + "&list=" + encodeURIComponent(list)
+            + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
         if (id === null) {
             $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
                     + "\" class=\"wt-list-item\" data-id=\"" + json.id 
@@ -83,7 +84,8 @@ var applyRemoveItem = function(id) {
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
         $.getJSON("ajax.php?a=delete&id=" + id 
-                + "&list=" + encodeURIComponent(list), function(json) {
+                + "&list=" + encodeURIComponent(list)
+                + "&s=" + encodeURIComponent(getHashVar(3)) , function(json) {
             $("#wt-list-item-" + id).remove();
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
@@ -106,7 +108,8 @@ var applyStrikeItem = function(id) {
             text.removeClass("wt-strike");
         }
         $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike 
-                + "&list=" + encodeURIComponent(list), function(json) {
+                + "&list=" + encodeURIComponent(list)
+                + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
             var item = $("#wt-list-item-" + id);
 
             if (strike) {
