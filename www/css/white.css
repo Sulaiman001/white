@@ -7,7 +7,7 @@ body {
     font-family:'everson', monospace ! important;
 }
 
-.wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text {
+.wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text, .wt-all-list-item {
     width:100%;
     margin:0px;
     padding:4px 8px;
@@ -22,7 +22,14 @@ body {
 .wt-list-item {
 }
 
-.wt-list-item:hover {
+.wt-all-list-item {
+}
+
+.wt-list-item, .wt-all-list-item {
+    cursor:pointer;
+}
+
+.wt-list-item:hover, .wt-all-list-item:hover {
     background-color:#f4f2ab;
 }
 

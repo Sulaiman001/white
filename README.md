@@ -7,6 +7,9 @@ List support provide by appending #/list/{listname} to URLs.
 
 Example: `https://www.example.com/white/www/#/list/stuff-to-remember`
 
+You may also see all lists in the system at `#/lists/secret-token`. See below in the
+INSTALL section for information. You will need to configure at `secret-token`.
+
 INSTALL
 =======
 
@@ -24,6 +27,12 @@ bin/run.sh
 ```
 
 Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet and MongoDB settings.
+
+Also edit `$cfg['secret']`. This is a secret token that will allow you to view all lists in the system. This hash URL is,
+
+    https://www.example.com/white/www/#/lists/your-secret-token-goes-here
+
+This token should be long an complicated as it will be viewable in the URL.
 
 Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
 

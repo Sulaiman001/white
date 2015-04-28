@@ -14,19 +14,22 @@ var autolinker = new Autolinker({
 // end: websocket config
 
 var p = function(str) {
+    "use strict";
     "use strict"
-    console.log(str);
 };
 
 var removeTitle = function() {
+    "use strict";
     return "Remove item";
 }
 
 var strikeTitle = function() {
+    "use strict";
     return "Strike out item";
 }
 
 var escapeHtml = function(html) {
+    "use strict";
     return autolinker.link(jQuery("<div/>").text(html).html());
 };
 
@@ -58,6 +61,7 @@ var saveText = function(id, text) {
 
 var editing = false;
 var applyEditItem = function(id) {
+    "use strict";
     $("#wt-text-" + id).on("click", function() {
         editing = true;
         var id = $(this).data("id");
@@ -74,6 +78,7 @@ var applyEditItem = function(id) {
 };
 
 var applyRemoveItem = function(id) {
+    "use strict";
     // Remove an item
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
@@ -86,6 +91,7 @@ var applyRemoveItem = function(id) {
 };
 
 var applyStrikeItem = function(id) {
+    "use strict";
     // Strike out an item
     $("#wt-list-item-chk-strike-" + id).on("click", function() {
         var id = $(this).data("id");
@@ -113,6 +119,7 @@ var applyStrikeItem = function(id) {
 };
 
 var applySaveTextOfItem = function(id) {
+    "use strict";
     // Save text of item
     prevtime = parseInt(new Date().getTime());
     curval = "";
@@ -137,6 +144,7 @@ var applySaveTextOfItem = function(id) {
 };
 
 var doApplySaveOnEnter = function(thiz, e) {
+    "use strict";
     if (editing || $("#wt-list-item-input-0").is(":focus")) {
         editing = false;
     } else {
@@ -144,7 +152,6 @@ var doApplySaveOnEnter = function(thiz, e) {
     }
     e.preventDefault();
     var id = thiz.data("id");
-    console.log("id: " + id);
     var text = $("#wt-list-item-input-" + id).val();
     if (id === 0) {
         saveText(null, text);
@@ -168,6 +175,7 @@ var doApplySaveOnEnter = function(thiz, e) {
 }
 
 var applySaveOnEnter = function(id) {
+    "use strict";
     // Hitting tener on item removes text input and saves item
     $("#wt-list-item-input-" + id).keypress(function (e) {
         var thiz = $(this);
@@ -180,6 +188,13 @@ var applySaveOnEnter = function(id) {
     });
 };
 
+var applyAllListClick = function() {
+    "use strict";
+    $(".wt-all-list-item").on("click", function() {
+        window.location.hash = "#/list/" + $(this).data("list");
+    });
+}
+
 var applyTooltip = function() {
     if (!(/iPhone|iPod|iPad|Android|BlackBerry|phone/i).test(navigator.userAgent)) {
         $(".btn-tooltip").tooltip();
@@ -191,21 +206,48 @@ var init = function() {
     var hash = window.location.hash;
     hash = hash.replace(/^#/, "");
     var hashVars = hash.split("/");
+    console.log("hash changed: " + hashVars);
+    startConnection();
     switch(hashVars[1]) {
         case "list":
             list = hashVars[2];
-            startConnection(list);
             load(list);
+            break;
+        case "lists":
+            loadAll();
             break;
         default:
             list = "public";
-            startConnection(list);
             load(list);
     }
 };
 
-var load = function(list) {
+var isUndefined = function(o) {
+    return undefined === o;
+}
+
+var getHashVar = function(key) {
+    return window.location.hash.replace(/^#/, "").split("/")[2];
+}
+
+var loadAll = function() {
+    $("#wt-list-item-0").hide();
     $(".wt-list-item").remove();
+    $("title").text("all lists");
+    $.getJSON("ajax.php?a=load-all&s=" + encodeURIComponent(getHashVar(2)), function(json) {
+        $.each(json.items, function(i, item) {
+            $(".wt-list").append("<div class=\"wt-all-list-item\" data-list=\""
+                    + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
+                    + "\" href=\"#/list/" + escapeHtml(item) + "\">#" + escapeHtml(item) + "</a></div>");
+        });
+        applyAllListClick();
+    });
+};
+
+var load = function(list) {
+    $("#wt-list-item-0").show();
+    $(".wt-list-item").remove();
+    $(".wt-all-list-item").remove();
     $("title").text("#" + list);
     $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list), function(json) {
         var previd = 0;
@@ -237,12 +279,9 @@ var load = function(list) {
 
 function handleMessage(json) {
     "use strict";
-    console.log("websocket: handleMessage: json: " + json);
     var jsonObj = JSON.parse(json);
     if (jsonObj.a === "message" && jsonObj.list === list) {
-        console.log("websocket: You got the right list.");
         if (jsonObj.actiontype === "strike") {
-            console.log("websocket: Striking item");
             var text = $("#wt-text-" + jsonObj.id);
             if (jsonObj.strike) {
                 text.addClass("wt-strike");
@@ -284,33 +323,25 @@ function handleMessage(json) {
     }
 }
 
-function loginToRoom(room, username) {
-    "use strict";
-    console.log("websocket: loginToRoom");
-    try {
-        console.log("websocket: Starting try");
-        var request = {"a": "login", "room": room};
-        console.log("websocket: Trying to login: " + request);
-        conn.send(JSON.stringify(request));
-    } catch (ex) {
-    }
+// http://stackoverflow.com/a/901144/272159
+function qs(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function startConnection(list) {
+function startConnection() {
     "use strict";
     if (!connected) {
         conn = new WebSocket(webSocketUrl);
-        console.log("websocket: Just made connection object.");
 
         conn.onopen = function(e) {
-            console.log("websocket: onopen");
             connected = true;
             reConnecting = false;
-            loginToRoom(list);
         };
 
         conn.onclose = function(e) {
-            console.log("websocket: onclose");
             connected = false;
             if (!reConnecting) {
                 reConnect();
@@ -318,7 +349,6 @@ function startConnection(list) {
         };
 
         conn.onerror = function(e) {
-            console.log("websocket: onerror");
             connected = false;
             if (!reConnecting) {
                 reConnect();
@@ -326,11 +356,8 @@ function startConnection(list) {
         };
 
         conn.onmessage = function(e) {
-            console.log("websocket: onmessage");
             handleMessage(e.data);
         };
-    } else {
-        loginToRoom(list);
     }
 }
 
