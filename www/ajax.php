@@ -30,7 +30,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
             "msg"=>"All items returned successfully.", "items"=>$lists)));
     die();
 
-} else if (isset($_GET['a']) && $_GET['a'] === "load") {
+} else if (isset($_GET['a']) && $_GET['a'] === "load" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
 
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $data = array("list"=>$_GET['list'], "deleted"=>false);
@@ -70,6 +70,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $mongoId = new MongoID(toMongoId($id));
+    // Uncomment this if you want to remove the item completely.
     //$items->remove(array("_id"=>$mongoId));
     $items->update(array("_id"=>$mongoId), array('$set' => array("deleted"=>true)));
 

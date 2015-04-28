@@ -235,7 +235,7 @@ var isUndefined = function(o) {
 }
 
 var getHashVar = function(key) {
-    return window.location.hash.replace(/^#/, "").split("/")[2];
+    return window.location.hash.replace(/^#/, "").split("/")[key];
 }
 
 var loadAll = function() {
@@ -257,7 +257,8 @@ var load = function(list) {
     $(".wt-list-item").remove();
     $(".wt-all-list-item").remove();
     $("title").text("#" + list);
-    $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list), function(json) {
+    $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list) 
+            + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
         var previd = 0;
         $.each(json.items, function(i, item) {
             var id = item.id;
