@@ -20,7 +20,17 @@ function toMongoId($htmlId) {
     return ltrim($htmlId, "wt");
 }
 
-if ($_GET['a'] === "load") {
+if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {
+
+    $items = $mongo->{$cfg['mongoDatabase']}->items;
+    $lists = $items->distinct("list");
+    sort($lists, SORT_NATURAL);
+
+    print(json_encode(array("status"=>"ok", 
+            "msg"=>"All items returned successfully.", "items"=>$lists)));
+    die();
+
+} else if (isset($_GET['a']) && $_GET['a'] === "load") {
 
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $data = array("list"=>$_GET['list']);
@@ -36,13 +46,13 @@ if ($_GET['a'] === "load") {
             "msg"=>"All items returned successfully.", "items"=>$items)));
     die();
 
-} else if ($_GET['a'] === "save") {
+} else if (isset($_GET['a']) && $_GET['a'] === "save") {
 
     $id = $_GET['id'];
     $text = $_GET['text'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $item = array("text"=>$_GET['text']);
-    if ($id === null || $id === "null") {
+    if (isset($_GET['a']) && $id === null || $id === "null") {
         $data = array("text"=>$_GET['text'], "strike"=>false, 
                 "list"=>$_GET['list'], "timestamp"=>getTime());
         $items->insert($data);
@@ -55,7 +65,7 @@ if ($_GET['a'] === "load") {
     print(json_encode(array("status"=>"ok", "msg"=>"Saved item.", "id"=>$id)));
     die();
 
-} else if ($_GET['a'] === "delete") {
+} else if (isset($_GET['a']) && $_GET['a'] === "delete") {
 
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
@@ -65,7 +75,7 @@ if ($_GET['a'] === "load") {
     print(json_encode(array("status"=>"ok", "msg"=>"Deleted item.")));
     die();
 
-} else if ($_GET['a'] === "strike") {
+} else if (isset($_GET['a']) && $_GET['a'] === "strike") {
 
     $id = $_GET['id'];
     $items = $mongo->{$cfg['mongoDatabase']}->items;
@@ -79,7 +89,7 @@ if ($_GET['a'] === "load") {
     print(json_encode(array("status"=>"ok", "msg"=>"Striked item.")));
     die();
 
-} else if ($_GET['a'] === "clear-poll-queue") {
+} else if (isset($_GET['a']) && $_GET['a'] === "clear-poll-queue") {
 
     $pollQueue = $mongo->{$cfg['mongoDatabase']}->queue;
     $pollQueue->remove(array("sessid"=>$sessid, "list"=>$_GET['list']));
