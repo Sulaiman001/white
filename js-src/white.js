@@ -246,7 +246,8 @@ var loadAll = function() {
         $.each(json.items, function(i, item) {
             $(".wt-list").append("<div class=\"wt-all-list-item\" data-list=\""
                     + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
-                    + "\" href=\"#/list/" + escapeHtml(item) + "\">#" + escapeHtml(item) + "</a></div>");
+                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + getHashVar(2) 
+                    + "\">#" + escapeHtml(item) + "</a></div>");
         });
         applyAllListClick();
     });
