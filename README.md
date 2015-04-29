@@ -3,7 +3,7 @@ white
 
 A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
 
-List support provide by appending #/list/{listname}/{secret} to URLs, where `{listname}` is anything you want to name your list and `{secret}` is a secret passphrase defined in `bin/config.php`.
+List support provide by appending `#/list/{listname}/{secret}` to URLs, where `{listname}` is anything you want to name your list and `{secret}` is a secret passphrase defined in `bin/config.php`.
 
 Example: `https://www.example.com/white/www/#/list/stuff-to-remember/a39f9b023c023ef20da03`
 
