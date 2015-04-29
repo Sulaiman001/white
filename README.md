@@ -7,8 +7,8 @@ List support provide by appending `#/list/{listname}/{secret}` to URLs, where `{
 
 Example: `https://www.example.com/white/www/#/list/stuff-to-remember/a39f9b023c023ef20da03`
 
-You may also see all lists in the system at `#/lists/secret-token`. See below in the
-INSTALL section for information. You will need to configure at `secret-token`.
+You may also see all lists in the system at `#/lists/{secret}`. See below in the
+INSTALL section for information. You will need to configure `{secret}` in `bin/config.php`.
 
 Syntax
 ======
