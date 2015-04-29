@@ -295,7 +295,11 @@ var load = function(list) {
     });
 };
 
-function handleMessage(json) {
+var sortByPriority = function() {
+    "use strict";
+}
+
+var handleMessage = function(json) {
     "use strict";
     var jsonObj = JSON.parse(json);
     if (jsonObj.a === "message" && jsonObj.list === list) {
@@ -342,14 +346,14 @@ function handleMessage(json) {
 }
 
 // http://stackoverflow.com/a/901144/272159
-function qs(name) {
+var qs = function(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function startConnection() {
+var startConnection = function() {
     "use strict";
     if (!connected) {
         conn = new WebSocket(webSocketUrl);
@@ -379,7 +383,7 @@ function startConnection() {
     }
 }
 
-function reConnect() {
+var reConnect = function() {
     "use strict";
     reConnecting = true;
     if (!connected) {
