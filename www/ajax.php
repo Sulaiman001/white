@@ -34,7 +34,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
 
     $items = $mongo->{$cfg['mongoDatabase']}->items;
     $data = array("list"=>$_GET['list'], "deleted"=>false);
-    $mr = $items->find($data)->sort(array("strike" => 1, "timestamp" => -1));
+    $mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1));//, "timestamp" => -1));
     $items = array();
     while ($mr->hasNext()) {
         $item = $mr->getNext();
@@ -54,6 +54,7 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     // start: process text
     // Get reminder (e.g. @:<21:29 4/28/2015>): [^\\]@:<\s*(.*?)\s*>
     preg_match("/([^\\\])?(@<\s*)(.*?)(\s*>)/", $text, $m);
+    $due = isset($m[3]) ? $m[3] : "";
     $text = count($m) > 0 ? str_replace($m[0], $m[1] . $m[3], $text) : $text;
 
     // Get label (e.g. #label): [^\\]#([a-zA-Z0-9-_]+)
@@ -66,10 +67,10 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     // end: process text
 
     $items = $mongo->{$cfg['mongoDatabase']}->items;
-    $item = array("text"=>$text);
     if (isset($_GET['a']) && $id === null || $id === "null") {
         $data = array("text"=>$text, "strike"=>false, 
-                "list"=>$_GET['list'], "deleted"=>false, "timestamp"=>getTime());
+                "list"=>$_GET['list'], "deleted"=>false, "labels"=>$labels,
+                "priority"=>$priority, "due"=>$due, "timestamp"=>getTime());
         $items->insert($data);
         $id = toHtmlId($data['_id']->{'$id'});
     } else {

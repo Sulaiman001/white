@@ -186,7 +186,6 @@ var doApplySaveOnEnter = function(thiz, e) {
         applySaveOnEnter(id);
         applyTooltip();
         saveText(id, text);
-        //load(getHashVar(2));
     }
 
     thiz.val("");
