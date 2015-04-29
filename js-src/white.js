@@ -33,8 +33,8 @@ var escapeHtml = function(html) {
     var text = autolinker.link(jQuery("<div/>").text(html).html());
     text = text.replace(/@&lt;([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})&gt;/, "$1");
     text = text.replace(/([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
-    text = text.replace(/([^\\])(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
-    text = text.replace(/([^\\])(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
+    text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
+    text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
     return text;
 };
 
@@ -209,7 +209,7 @@ var applySaveOnEnter = function(id) {
 var applyAllListClick = function() {
     "use strict";
     $(".wt-all-list-item").on("click", function() {
-        window.location.hash = "#/list/" + $(this).data("list");
+        window.location.hash = "#/list/" + $(this).data("list") + "/" + getHashVar(2);
     });
 }
 

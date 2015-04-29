@@ -53,15 +53,15 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
 
     // start: process text
     // Get reminder (e.g. @:<21:29 4/28/2015>): [^\\]@:<\s*(.*?)\s*>
-    preg_match("/([^\\\])(@<\s*)(.*?)(\s*>)/", $text, $m);
+    preg_match("/([^\\\])?(@<\s*)(.*?)(\s*>)/", $text, $m);
     $text = count($m) > 0 ? str_replace($m[0], $m[1] . $m[3], $text) : $text;
 
     // Get label (e.g. #label): [^\\]#([a-zA-Z0-9-_]+)
-    preg_match_all("/[^\\\]#([a-zA-Z0-9-_]+)/", $text, $m);
+    preg_match_all("/[^\\\]?#([a-zA-Z0-9-_]+)/", $text, $m);
     $labels = count($m) > 0 ? $m[1] : array();
 
     // Get priority (e.g. !10): [^\\]!([0-9]+)
-    preg_match("/[^\\\]!([0-9]+)/", $text, $m);
+    preg_match("/[^\\\]?!([0-9]+)/", $text, $m);
     $priority = count($m) > 0 ? $m[1] : 0;
     // end: process text
 
