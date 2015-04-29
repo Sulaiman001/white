@@ -50,19 +50,35 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
 
     $id = $_GET['id'];
     $text = $_GET['text'];
+
+    // start: process text
+    // Get reminder (e.g. @:<21:29 4/28/2015>): [^\\]@:<\s*(.*?)\s*>
+    preg_match("/([^\\\])(@<\s*)(.*?)(\s*>)/", $text, $m);
+    $text = count($m) > 0 ? str_replace($m[0], $m[1] . $m[3], $text) : $text;
+
+    // Get label (e.g. #label): [^\\]#([a-zA-Z0-9-_]+)
+    preg_match_all("/[^\\\]#([a-zA-Z0-9-_]+)/", $text, $m);
+    $labels = count($m) > 0 ? $m[1] : array();
+
+    // Get priority (e.g. !10): [^\\]!([0-9]+)
+    preg_match("/[^\\\]!([0-9]+)/", $text, $m);
+    $priority = count($m) > 0 ? $m[1] : 0;
+    // end: process text
+
     $items = $mongo->{$cfg['mongoDatabase']}->items;
-    $item = array("text"=>$_GET['text']);
+    $item = array("text"=>$text);
     if (isset($_GET['a']) && $id === null || $id === "null") {
-        $data = array("text"=>$_GET['text'], "strike"=>false, 
+        $data = array("text"=>$text, "strike"=>false, 
                 "list"=>$_GET['list'], "deleted"=>false, "timestamp"=>getTime());
         $items->insert($data);
         $id = toHtmlId($data['_id']->{'$id'});
     } else {
         $mongoId = new MongoID(toMongoId($id));
-        $items->update(array("_id"=>$mongoId), array('$set'=>array("text"=>$_GET['text'])));
+        $items->update(array("_id"=>$mongoId), array('$set'=>array("text"=>$text)));
     }
 
-    print(json_encode(array("status"=>"ok", "msg"=>"Saved item.", "id"=>$id)));
+    print(json_encode(array("status"=>"ok", "msg"=>"Saved item.", "id"=>$id, 
+            "labels"=>$labels, "priority"=>$priority)));
     die();
 
 } else if (isset($_GET['a']) && $_GET['a'] === "delete" && isset($_GET['s']) && $_GET['s'] === $cfg['secret']) {

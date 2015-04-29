@@ -71,3 +71,21 @@ body {
 .wt-list-item-input:focus, wt-list-item-input:active {
     outline:0;
 }
+
+.label-remind {
+    color:black;
+    background-color:#e27f51;
+    font-weight:bold;
+}
+
+.label-label {
+    color:black;
+    font-weight:bold;
+    background-color:#d8c5e5;
+}
+
+.label-priority {
+    color:black;
+    background-color:#8bd4ef;
+    font-weight:bold;
+}

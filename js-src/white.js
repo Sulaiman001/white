@@ -30,7 +30,12 @@ var strikeTitle = function() {
 
 var escapeHtml = function(html) {
     "use strict";
-    return autolinker.link(jQuery("<div/>").text(html).html());
+    var text = autolinker.link(jQuery("<div/>").text(html).html());
+    text = text.replace(/@&lt;([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})&gt;/, "$1");
+    text = text.replace(/([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
+    text = text.replace(/([^\\])(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
+    text = text.replace(/([^\\])(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
+    return text;
 };
 
 var saveText = function(id, text) {
@@ -167,6 +172,7 @@ var doApplySaveOnEnter = function(thiz, e) {
     if (id === 0) {
         saveText(null, text);
     } else {
+        // TODO: Retrieve the post-processed text instead of what the user entered. Primarily to grab the @<syntax>
         $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
                 + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
                 + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
@@ -180,6 +186,7 @@ var doApplySaveOnEnter = function(thiz, e) {
         applySaveOnEnter(id);
         applyTooltip();
         saveText(id, text);
+        //load(getHashVar(2));
     }
 
     thiz.val("");
@@ -217,7 +224,6 @@ var init = function() {
     var hash = window.location.hash;
     hash = hash.replace(/^#/, "");
     var hashVars = hash.split("/");
-    console.log("hash changed: " + hashVars);
     startConnection();
     switch(hashVars[1]) {
         case "list":

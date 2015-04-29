@@ -10,6 +10,57 @@ Example: `https://www.example.com/white/www/#/list/stuff-to-remember/a39f9b023c0
 You may also see all lists in the system at `#/lists/secret-token`. See below in the
 INSTALL section for information. You will need to configure at `secret-token`.
 
+Syntax
+======
+_Note: Sorting and due date reminders will be available soon, however the syntax is ready and parsed so you will see nicely styled HTML. It just won't be functional._
+
+Each todo item is a single line of text.
+
+URLs and emails will automatically be linked using [Autolinker.js](https://github.com/gregjacobs/Autolinker.js).
+
+There are 3 special labels: priority, label, and due date. See the following example todo items for usage.
+
+A priority is represented by an exclamation mark followed by an integer. The higher the integer, the higher the priority. A todo item may only contain one of these. Items will be sorted accordingly - the higher priorities towards the top.
+
+    !10
+
+A label is represented by a pound symbol followed by a word containing only lower and upper case letters, numbers, underscores, and dashes. Labels are used for grouping and sorting todo list items. A todo list item may contain any number of labels.
+
+    #these #are #labels
+
+A due date is an @ symbol followed by a due date inside of left and right angle brackets. Once the todo list item is saved the date is parsed with the UNIX `at` command and the syntax is stripped so that you don't queue the todo item again.
+
+    @<12:00 4/28/2015>
+
+The date must follow a valid `at` time convention gathered from http://www.computerhope.com/unix/uat.htm
+
+    noon               => 12:00 PM October 18 2014
+    midnight           => 12:00 AM October 19 2014
+    teatime            => 4:00 PM October 18 2014
+    tomorrow           => 10:00 AM October 19 2014
+    noon tomorrow      => 12:00 PM October 19 2014
+    next week          => 10:00 AM October 25 2014
+    next monday        => 10:00 AM October 24 2014
+    fri                => 10:00 AM October 21 2014
+    NOV                => 10:00 AM November 18 2014
+    9:00 AM            => 9:00 AM October 19 2014
+    2:30 PM            => 2:30 PM October 18 2014
+    1430               => 2:30 PM October 18 2014
+    2:30 PM tomorrow   => 2:30 PM October 19 2014
+    2:30 PM next month => 2:30 PM November 18 2014
+    2:30 PM Fri        => 2:30 PM October 21 2014
+    2:30 PM 10/21      => 2:30 PM October 21 2014
+    2:30 PM Oct 21     => 2:30 PM October 21 2014
+    2:30 PM 10/21/2014 => 2:30 PM October 21 2014
+    2:30 PM 21.10.14   => 2:30 PM October 21 2014
+    now + 30 minutes   => 10:30 AM October 18 2014
+    now + 1 hour       => 11:00 AM October 18 2014
+    now + 2 days       => 10:00 AM October 20 2014
+    4 PM + 2 days      => 4:00 PM October 20 2014
+    now + 3 weeks      => 10:00 AM November 8 2014
+    now + 4 months     => 10:00 AM February 18 2015
+    now + 5 years      => 10:00 AM October 18 2019
+
 INSTALL
 =======
 
