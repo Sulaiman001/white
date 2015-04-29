@@ -38,8 +38,9 @@ if (isset($_GET['a']) && $_GET['a'] === "load-all" && isset($_GET['s']) && $_GET
     $items = array();
     while ($mr->hasNext()) {
         $item = $mr->getNext();
-        $items[] = array("id"=>toHtmlId($item['_id']->{'$id'}), 
-                "text"=>$item['text'], "strike"=>$item['strike']);
+        $items[] = array("id"=>toHtmlId($item['_id']->{'$id'}), "text"=>$item['text'], 
+            "strike"=>$item['strike'], "labels"=>$item['labels'], "priority"=>$item['priority'], 
+            "due"=>$item['due']);
     }
 
     print(json_encode(array("status"=>"ok", 
