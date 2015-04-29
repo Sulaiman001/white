@@ -27,10 +27,19 @@ body {
 
 .wt-list-item, .wt-all-list-item {
     cursor:pointer;
+    background-color:#ffffff;
+    -webkit-transition:background-color 1.0s ease-out;
+    -moz-transition:background-color 1.0s ease-out;
+    -o-transition:background-color 1.0s ease-out;
+    transition:background-color 1.0s ease-out;
 }
 
 .wt-list-item:hover, .wt-all-list-item:hover {
     background-color:#f4f2ab;
+    -webkit-transition:background-color 0.1s ease-in;
+    -moz-transition:background-color 0.1s ease-in;
+    -o-transition:background-color 0.1s ease-in;
+    transition:background-color 0.1s ease-in;
 }
 
 .wt-list-item-input {
