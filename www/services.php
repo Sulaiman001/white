@@ -1,7 +1,7 @@
 <?php
 
 require_once("../bin/config.php");
-require("../vendor/autoload.php");
+require_once("../vendor/autoload.php");
 
 $cfg['mongoDatabase'] = "white";
 $mongo = new Mongo($cfg['mongoHost']);
@@ -48,7 +48,7 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
     if (isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $data = array("list"=>$list, "deleted"=>false);
-        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1));//, "timestamp" => -1));
+        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
