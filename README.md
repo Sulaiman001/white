@@ -1,7 +1,7 @@
 white
 =====
 
-A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
+A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP, Slim for RESTful API, and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
 
 List support provide by appending `#/list/{listname}/{secret}` to URLs, where `{listname}` is anything you want to name your list and `{secret}` is a secret passphrase defined in `bin/config.php`.
 
