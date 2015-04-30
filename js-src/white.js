@@ -40,27 +40,32 @@ var escapeHtml = function(html) {
 
 var saveText = function(id, text) {
     "use strict"
-    $.getJSON("ajax.php?a=save&id=" + id + "&text=" 
-            + encodeURIComponent(text) + "&list=" + encodeURIComponent(list)
-            + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
-        if (id === null) {
-            $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
-                    + "\" class=\"wt-list-item\" data-id=\"" + json.id 
-                    + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                    + json.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + json.id 
-                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + json.id 
-                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + json.id 
-                    + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
-                    + "\">" + escapeHtml(text) + "</span></p></div>");
-            conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
-            applyEditItem(json.id);
-            applyRemoveItem(json.id);
-            applyStrikeItem(json.id);
-            applySaveTextOfItem(json.id);
-            applySaveOnEnter(json.id);
-            applyTooltip();
-        } else {
-            conn.send(JSON.stringify({"a": "message", "actiontype": "save", "list": list, "text": text, "id": json.id}));
+    $.ajax({
+        type: "POST",
+        url: "services/save/" + encodeURIComponent(list) + "/" + id
+                + "/" + encodeURIComponent(getHashVar(3)),
+        data: { text: text },
+        dataType: "json",
+        success: function(json) {
+            if (id === null) {
+                $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
+                        + "\" class=\"wt-list-item\" data-id=\"" + json.id 
+                        + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
+                        + json.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + json.id 
+                        + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + json.id 
+                        + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + json.id 
+                        + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
+                        + "\">" + escapeHtml(text) + "</span></p></div>");
+                conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
+                applyEditItem(json.id);
+                applyRemoveItem(json.id);
+                applyStrikeItem(json.id);
+                applySaveTextOfItem(json.id);
+                applySaveOnEnter(json.id);
+                applyTooltip();
+            } else {
+                conn.send(JSON.stringify({"a": "message", "actiontype": "save", "list": list, "text": text, "id": json.id}));
+            }
         }
     });
 };
@@ -88,9 +93,8 @@ var applyRemoveItem = function(id) {
     // Remove an item
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
-        $.getJSON("ajax.php?a=delete&id=" + id 
-                + "&list=" + encodeURIComponent(list)
-                + "&s=" + encodeURIComponent(getHashVar(3)) , function(json) {
+        $.getJSON("services/delete/" + id 
+                + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
             $("#wt-list-item-" + id).remove();
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
@@ -112,9 +116,8 @@ var applyStrikeItem = function(id) {
         } else {
             text.removeClass("wt-strike");
         }
-        $.getJSON("ajax.php?a=strike&id=" + id + "&strike=" + strike 
-                + "&list=" + encodeURIComponent(list)
-                + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
+        $.getJSON("services/strike/" + id + "/" + strike
+                + "/" + encodeURIComponent(getHashVar(3)), function(json) {
             var item = $("#wt-list-item-" + id);
 
             if (strike) {
@@ -250,7 +253,7 @@ var loadAll = function() {
     $("#wt-list-item-0").hide();
     $(".wt-list-item").remove();
     $("title").text("all lists");
-    $.getJSON("ajax.php?a=load-all&s=" + encodeURIComponent(getHashVar(2)), function(json) {
+    $.getJSON("services/load-all/" + encodeURIComponent(getHashVar(2)), function(json) {
         $.each(json.items, function(i, item) {
             $(".wt-list").append("<div class=\"wt-all-list-item\" data-list=\""
                     + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
@@ -266,8 +269,8 @@ var load = function(list) {
     $(".wt-list-item").remove();
     $(".wt-all-list-item").remove();
     $("title").text("#" + list);
-    $.getJSON("ajax.php?a=load&list=" + encodeURIComponent(list) 
-            + "&s=" + encodeURIComponent(getHashVar(3)), function(json) {
+    $.getJSON("services/load/" + encodeURIComponent(list) 
+            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
         var previd = 0;
         $.each(json.items, function(i, item) {
             var id = item.id;
