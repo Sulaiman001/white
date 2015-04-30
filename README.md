@@ -46,6 +46,8 @@ To enable due dates you must configure them in `bin/config.php`.
     $cfg['due-subject-prefix'] = "[white]";
     $cfg['due-truncate-subject-at'] = 32;
 
+If you're not familiar with `at` commands you may be interested in installing [https://github.com/wsams/zoopaz-reminders](https://github.com/wsams/zoopaz-reminders). This will allow you to add and remove reminders from a web interface.
+
 Dependencies
 ============
 * PHP
