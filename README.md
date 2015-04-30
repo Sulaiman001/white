@@ -10,6 +10,8 @@ Example: `https://www.example.com/white/www/#/list/stuff-to-remember/a39f9b023c0
 You may also see all lists in the system at `#/lists/{secret}`. See below in the
 INSTALL section for information. You will need to configure `{secret}` in `bin/config.php`.
 
+Lists will by default be sorted as follows. All items with a priority will be at the top of the list and sort descending (e.g. `!3 !2 !1`). All items marked done will be at the bottom of the list and sorted descending by last modified date. The last updated will be at the top. All other items will be inbetween items with a priority and those without a priority and sorted by last modified descending as well. Note, the default priority is `!0` so entering this directly in an item will have no effect. It will be sorted in the middle along with items that are not done and have no set priority.
+
 Syntax
 ======
 _Note: Sorting and due date reminders will be available soon, however the syntax is ready and parsed so you will see nicely styled HTML. It just won't be functional._
