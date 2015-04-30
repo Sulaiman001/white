@@ -3,7 +3,8 @@
 require_once("../bin/config.php");
 require_once("../vendor/autoload.php");
 
-$cfg['mongoDatabase'] = "white";
+date_default_timezone_set($cfg['timezone']);
+
 $mongo = new Mongo($cfg['mongoHost']);
 
 session_start();
@@ -28,6 +29,33 @@ function isValid($secret, $realSecret) {
 function response($arr, $status="ok") {
     $arr['status'] = $status;
     print(json_encode($arr));
+}
+
+function parseForAt($due) {
+    return date("H:i n/j/Y", strtotime(trim($due)));
+}
+
+function remind($due, $text, $cfg) {
+    if ($cfg['enable-due']) {
+        $due = parseForAt($due);
+        $message = preg_replace("/\"/", "\\\"", trim($text));
+        $message = preg_replace("/\r|\n/", "", $message);
+        $messageTruncated = strlen($message) > $cfg['due-truncate-subject-at'] 
+            ? substr($message, 0, $cfg['due-truncate-subject-at']) . "..." : $message;
+        // sudo at 16:57 7/9/2014 -f test.sh
+        $rand = sha1(microtime() . date("U") . time() . $due);
+        if (!file_exists("../jobs")) {
+            mkdir("../jobs");
+        }
+        foreach ($cfg['due-to'] as $email) {
+            file_put_contents("../jobs/{$rand}", "echo \"{$message}\" | "
+                . "mail -a \"From: {$cfg['due-from']}\" -s "
+                . "\"{$cfg['due-subject-prefix']} {$messageTruncated}\" {$email}\n", FILE_APPEND);
+        }
+        $cmd = "sudo at {$due} -f ../jobs/{$rand}";
+        print(getcwd() . " :: {$cmd} \n");
+        exec($cmd);
+    }
 }
 
 $app = new \Slim\Slim();
@@ -62,21 +90,25 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
     }
 });
 
-$app->post('/services/save/:list/:id/:secret', function ($list, $id, $secret) use ($cfg, $mongo, $app) {
+$app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done, $secret) use ($cfg, $mongo, $app) {
     if (isValid($secret, $cfg['secret'])) {
         $text = $app->request()->post("text");
 
         // start: process text
-        // Get reminder (e.g. @:<21:29 4/28/2015>): [^\\]@:<\s*(.*?)\s*>
+        // Get reminder using strtotime() syntax (e.g. @<Friday 5pm>)
         preg_match("/([^\\\])?(@<\s*)(.*?)(\s*>)/", $text, $m);
         $due = isset($m[3]) ? $m[3] : "";
-        $text = count($m) > 0 ? str_replace($m[0], $m[1] . $m[3], $text) : $text;
+        $text = count($m) > 0 ? str_replace($m[0], $m[1] . (parseForAt($due)), $text) : $text;
+        $done = $done === true || $done === "true" ? true : false;
+        if ($done) {
+            remind($due, $text, $cfg);
+        }
 
-        // Get label (e.g. #label): [^\\]#([a-zA-Z0-9-_]+)
+        // Get label (e.g. #label)
         preg_match_all("/[^\\\]?#([a-zA-Z0-9-_]+)/", $text, $m);
         $labels = count($m) > 0 ? $m[1] : array();
 
-        // Get priority (e.g. !10): [^\\]!([0-9]+)
+        // Get priority (e.g. !10)
         preg_match("/[^\\\]?!([0-9]+)/", $text, $m);
         $priority = count($m) > 0 ? $m[1] : 0;
         // end: process text

@@ -31,19 +31,21 @@ var strikeTitle = function() {
 var escapeHtml = function(html) {
     "use strict";
     var text = autolinker.link(jQuery("<div/>").text(html).html());
-    text = text.replace(/@&lt;([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})&gt;/, "$1");
-    text = text.replace(/([0-9]{2}:[0-9]{2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
+    // TODO: This will not be needed when items are pulled from services on save.
+    text = text.replace(/@&lt;(.*?)&gt;/, "<span class=\"label label-remind\">$1</span>");
+    text = text.replace(/([0-9]{1,2}:[0-9]{1,2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
     return text;
 };
 
-var saveText = function(id, text) {
+var saveText = function(id, text, done) {
     "use strict"
+    console.log("done: " + done);
     $.ajax({
         type: "POST",
         url: "services/save/" + encodeURIComponent(list) + "/" + id
-                + "/" + encodeURIComponent(getHashVar(3)),
+                + "/" + done + "/" + encodeURIComponent(getHashVar(3)),
         data: { text: text },
         dataType: "json",
         success: function(json) {
@@ -156,7 +158,7 @@ var applySaveTextOfItem = function(id) {
             clearTimeout(t);
             var text = $("#wt-list-item-input-" + id).val();
             text = text.replace(/'/, "\\'");
-            t = setTimeout("saveText('" + id + "', '" + text + "')", 500);
+            t = setTimeout("saveText('" + id + "', '" + text + "', 'false')", 500);
             return;
         }
     });
@@ -188,7 +190,7 @@ var doApplySaveOnEnter = function(thiz, e) {
         applySaveTextOfItem(id);
         applySaveOnEnter(id);
         applyTooltip();
-        saveText(id, text);
+        saveText(id, text, true);
     }
 
     thiz.val("");

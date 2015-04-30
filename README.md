@@ -14,8 +14,6 @@ Lists will by default be sorted as follows. All items with a priority will be at
 
 Syntax
 ======
-_Note: Sorting and due date reminders will be available soon, however the syntax is ready and parsed so you will see nicely styled HTML. It just won't be functional._
-
 Each todo item is a single line of text.
 
 URLs and emails will automatically be linked using [Autolinker.js](https://github.com/gregjacobs/Autolinker.js).
@@ -30,38 +28,31 @@ A label is represented by a pound symbol followed by a word containing only lowe
 
     #these #are #labels
 
-A due date is an @ symbol followed by a due date inside of left and right angle brackets. Once the todo list item is saved the date is parsed with the UNIX `at` command and the syntax is stripped so that you don't queue the todo item again.
+A due date is an @ symbol followed by a due date inside of left and right angle brackets. Once the todo list item is saved the reminder is queued using the UNIX `at` command and the syntax is stripped so that you don't queue the todo item again.
+
+The date and time inside of `@<...>` is parsed with the PHP `strtotime()` function. This means it may follow patterns like the following. See http://php.net/strtotime
 
     @<12:00 4/28/2015>
+    @<+1 hour>
+    @<Friday 5pm>
 
-The date must follow a valid `at` time convention gathered from http://www.computerhope.com/unix/uat.htm
+Also note that the reminder will be stored in the database as `HH:mm dd/mm/YYYY` and will appear in your list. The original reminder syntax will be stripped.
 
-    noon               => 12:00 PM October 18 2014
-    midnight           => 12:00 AM October 19 2014
-    teatime            => 4:00 PM October 18 2014
-    tomorrow           => 10:00 AM October 19 2014
-    noon tomorrow      => 12:00 PM October 19 2014
-    next week          => 10:00 AM October 25 2014
-    next monday        => 10:00 AM October 24 2014
-    fri                => 10:00 AM October 21 2014
-    NOV                => 10:00 AM November 18 2014
-    9:00 AM            => 9:00 AM October 19 2014
-    2:30 PM            => 2:30 PM October 18 2014
-    1430               => 2:30 PM October 18 2014
-    2:30 PM tomorrow   => 2:30 PM October 19 2014
-    2:30 PM next month => 2:30 PM November 18 2014
-    2:30 PM Fri        => 2:30 PM October 21 2014
-    2:30 PM 10/21      => 2:30 PM October 21 2014
-    2:30 PM Oct 21     => 2:30 PM October 21 2014
-    2:30 PM 10/21/2014 => 2:30 PM October 21 2014
-    2:30 PM 21.10.14   => 2:30 PM October 21 2014
-    now + 30 minutes   => 10:30 AM October 18 2014
-    now + 1 hour       => 11:00 AM October 18 2014
-    now + 2 days       => 10:00 AM October 20 2014
-    4 PM + 2 days      => 4:00 PM October 20 2014
-    now + 3 weeks      => 10:00 AM November 8 2014
-    now + 4 months     => 10:00 AM February 18 2015
-    now + 5 years      => 10:00 AM October 18 2019
+To enable due dates you must configure them in `bin/config.php`.
+
+    $cfg['enable-due'] = true;
+    $cfg['due-from'] = array("reminders@example.com");
+    $cfg['due-to'] = array("foobar@example.com");
+    $cfg['due-subject-prefix'] = "[white]";
+    $cfg['due-truncate-subject-at'] = 32;
+
+Dependencies
+============
+* PHP
+* MongoDB
+* Composer
+* Ideally SSL
+* UNIX commands if reminders are enabled: `at`, `sudo`, `echo`, `mail`
 
 INSTALL
 =======
@@ -79,15 +70,25 @@ cd /path/to/white
 bin/run.sh
 ```
 
-Copy `bin/example.config.php` to `bin/config.php` and update the Ratchet and MongoDB settings.
+Copy `bin/example.config.php` to `bin/config.php` and update the settings.
 
-Also edit `$cfg['secret']`. This is a secret token that will allow you to view all lists in the system. This hash URL is,
+Be sure to edit `$cfg['secret']`. This is a secret token that will allow you to view all lists in the system. This hash URL is,
 
     https://www.example.com/white/www/#/lists/your-secret-token-goes-here
 
 This token should be long an complicated as it will be viewable in the URL.
 
 Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
+
+For reminders you must also do something similar to the following so that your web server user can execute `at`.
+
+Add similar lines to `/etc/sudoers`.
+
+    ALL ALL=NOPASSWD: /usr/bin/at
+    ALL ALL=NOPASSWD: /usr/bin/atq
+    ALL ALL=NOPASSWD: /usr/bin/atrm
+
+Future versions may use `/etc/at.allow`.
 
 Open `www/index.php` in a browser.
 

@@ -10,7 +10,7 @@ require dirname(__DIR__) . '/bin/config.php';
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
-            new White($cfg, $mongo)
+            new White()
         )
     ),
     $cfg['webSocketPort']

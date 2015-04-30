@@ -9,17 +9,13 @@ class White implements MessageComponentInterface {
     private $lists;
     private $listUsers;
     private $users;
-    private $mongo;
     private $db;
     private $dbLists;
     private $dbMessages;
     private $moreMessagesLimit = 20;
-    private $cfg;
 
-    public function __construct($cfg, $mongo) {
-        $this->mongo = $mongo;
+    public function __construct() {
         $this->clients = new \SplObjectStorage;
-        $this->cfg = $cfg;
         $this->users = array();
         foreach ($this->users as $k=>$v) {
             unset($this->users[$k]);
@@ -73,7 +69,6 @@ class White implements MessageComponentInterface {
     }
 
     function handleMessage($from, $json, $t=null) {
-        var_dump($json);
         if (!isset($t)) {
             $t = "message";
         }
