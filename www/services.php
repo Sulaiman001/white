@@ -48,7 +48,8 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
     if (isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $data = array("list"=>$list, "deleted"=>false);
-        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
+        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
+        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
@@ -81,17 +82,18 @@ $app->post('/services/save/:list/:id/:secret', function ($list, $id, $secret) us
         // end: process text
 
         $items = $mongo->{$cfg['mongoDatabase']}->items;
+        $data = array("text"=>$text, "list"=>$list, "labels"=>$labels,
+                "priority"=>$priority, "due"=>$due, "timestamp"=>getTime());
         if ($id === null || $id === "null") {
-            // This handles an update.
-            $data = array("text"=>$text, "strike"=>false, 
-                    "list"=>$list, "deleted"=>false, "labels"=>$labels,
-                    "priority"=>$priority, "due"=>$due, "timestamp"=>getTime());
+            // This handles a new item.
+            $data['strike'] = false;
+            $data['deleted'] = false;
             $items->insert($data);
             $id = toHtmlId($data['_id']->{'$id'});
         } else {
-            // This handles a new item.
+            // This handles an update.
             $mongoId = new MongoID(toMongoId($id));
-            $items->update(array("_id"=>$mongoId), array('$set'=>array("text"=>$text)));
+            $items->update(array("_id"=>$mongoId), array('$set'=>$data));
         }
 
         response(array("msg"=>"Saved item.", "id"=>$id, "labels"=>$labels, "priority"=>$priority));
