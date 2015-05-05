@@ -175,7 +175,7 @@ var doApplySaveOnEnter = function(thiz, e) {
     var id = thiz.data("id");
     var text = $("#wt-list-item-input-" + id).val();
     if (id === 0) {
-        saveText(null, text);
+        saveText(null, text, true);
     } else {
         // TODO: Retrieve the post-processed text instead of what the user entered. Primarily to grab the @<syntax>
         $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
@@ -204,7 +204,8 @@ var applySaveOnEnter = function(id) {
         thiz.on("blur", function() {
             doApplySaveOnEnter(thiz, e);
         });
-        if (e.which == 13) {
+        if (e.which === 13 || e.which === 27) {
+            console.log("saving 27");
             doApplySaveOnEnter(thiz, e);
         }
     });

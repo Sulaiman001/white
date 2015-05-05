@@ -5,3 +5,5 @@ config.php
 compile_js.bash
 compile_js.php
 jobs/
+watch-js.sh
+*.swp

@@ -42,7 +42,6 @@ function remind($due, $text, $cfg) {
         $message = preg_replace("/\r|\n/", "", $message);
         $messageTruncated = strlen($message) > $cfg['due-truncate-subject-at'] 
             ? substr($message, 0, $cfg['due-truncate-subject-at']) . "..." : $message;
-        // sudo at 16:57 7/9/2014 -f test.sh
         $rand = sha1(microtime() . date("U") . time() . $due);
         if (!file_exists("../jobs")) {
             mkdir("../jobs");
@@ -53,7 +52,6 @@ function remind($due, $text, $cfg) {
                 . "\"{$cfg['due-subject-prefix']} {$messageTruncated}\" {$email}\n", FILE_APPEND);
         }
         $cmd = "sudo at {$due} -f ../jobs/{$rand}";
-        print(getcwd() . " :: {$cmd} \n");
         exec($cmd);
     }
 }
