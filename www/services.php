@@ -93,8 +93,8 @@ $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done
         $text = $app->request()->post("text");
 
         // start: process text
-        // Get reminder using strtotime() syntax (e.g. @<Friday 5pm>)
-        preg_match("/([^\\\])?(@<\s*)(.*?)(\s*>)/", $text, $m);
+        // Get reminder using strtotime() syntax (e.g. @<Friday 5pm> or @(Friday 5pm))
+        preg_match("/([^\\\])?(@[<\(]\s*)(.*?)(\s*[>\)])/", $text, $m);
         $due = isset($m[3]) ? $m[3] : "";
         $text = count($m) > 0 ? str_replace($m[0], $m[1] . (parseForAt($due)), $text) : $text;
         $done = $done === true || $done === "true" ? true : false;

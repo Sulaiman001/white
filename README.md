@@ -92,6 +92,8 @@ Add similar lines to `/etc/sudoers`.
 
 Future versions may use `/etc/at.allow`.
 
+You may need to setup URL rewriting to support the clean URLs used by the Slim `services.php` file. The jQuery ajax calls point to `services/`. See http://docs.slimframework.com/routing/rewrite/ for information on rewriting URLs instead of pointing directly at `services.php`.
+
 Open `www/index.php` in a browser.
 
 Setup Stunnel for SSL encryption for secure web sockets

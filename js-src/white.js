@@ -33,6 +33,7 @@ var escapeHtml = function(html) {
     var text = autolinker.link(jQuery("<div/>").text(html).html());
     // TODO: This will not be needed when items are pulled from services on save.
     text = text.replace(/@&lt;(.*?)&gt;/, "<span class=\"label label-remind\">$1</span>");
+    text = text.replace(/@\((.*?)\)/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([0-9]{1,2}:[0-9]{1,2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
