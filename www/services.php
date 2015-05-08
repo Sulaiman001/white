@@ -35,18 +35,7 @@ $app->get('/services/load-all/:secret', function ($secret) use ($cfg, $mongo, $w
 
 $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
-        $items = $mongo->{$cfg['mongoDatabase']}->items;
-        $data = array("list"=>$list, "deleted"=>false);
-        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
-        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
-        $items = array();
-        while ($mr->hasNext()) {
-            $item = $mr->getNext();
-            $items[] = array("id"=>$w->toHtmlId($item['_id']->{'$id'}), "text"=>$item['text'], 
-                "strike"=>$item['strike'], "labels"=>$item['labels'], "priority"=>$item['priority'], 
-                "due"=>$item['due']);
-        }
-        response(array("msg"=>"All items returned successfully.", "items"=>$items));
+        response(array("msg"=>"All items returned successfully.", "items"=>$w->getList($list)));
     } else {
         responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }

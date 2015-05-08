@@ -58,4 +58,19 @@ class White {
         return $lists;
     }
 
+    public function getList($list) {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $data = array("list"=>$list, "deleted"=>false);
+        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
+        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
+        $items = array();
+        while ($mr->hasNext()) {
+            $item = $mr->getNext();
+            $items[] = array("id"=>$this->toHtmlId($item['_id']->{'$id'}), "text"=>$item['text'], 
+                "strike"=>$item['strike'], "labels"=>$item['labels'], "priority"=>$item['priority'], 
+                "due"=>$item['due']);
+        }
+        return $items;
+    }
+
 }
