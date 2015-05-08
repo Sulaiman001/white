@@ -78,7 +78,7 @@ Be sure to edit `$cfg['secret']`. This is a secret token that will allow you to 
 
     https://www.example.com/white/www/#/lists/your-secret-token-goes-here
 
-This token should be long and complicated as it will be viewable in the URL. Here's a handy way to generate one: [https://duckduckgo.com/?q=sha256+my+secret+password](https://duckduckgo.com/?q=sha256+my+secret+password)
+This token should be long and complicated as it will be viewable in the URL. Here's a handy way to generate one: [https://duckduckgo.com/?q=sha512+my+secret+password](https://duckduckgo.com/?q=sha512+my+secret+password)
 
 Copy `www/js/example.config.js` to `www/js/config.js` and update the JavaScript settings.
 
