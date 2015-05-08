@@ -27,10 +27,7 @@ $app->response()->header("Content-Type", "application/json");
 
 $app->get('/services/load-all/:secret', function ($secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
-        $items = $mongo->{$cfg['mongoDatabase']}->items;
-        $lists = $items->distinct("list");
-        sort($lists, SORT_NATURAL);
-        response(array("msg"=>"All items returned successfully.", "items"=>$lists));
+        response(array("msg"=>"All items returned successfully.", "items"=>$w->getAllLists()));
     } else {
         responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }

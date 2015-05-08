@@ -51,4 +51,11 @@ class White {
         }
     }
 
+    public function getAllLists() {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $lists = $items->distinct("list");
+        sort($lists, SORT_NATURAL);
+        return $lists;
+    }
+
 }
