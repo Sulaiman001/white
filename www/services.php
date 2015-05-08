@@ -12,26 +12,31 @@ $w = new White($mongo, $cfg);
 session_start();
 $sessid = session_id();
 
-function response($arr, $status="ok") {
-    $arr['status'] = $status;
+function response($arr) {
     print(json_encode($arr));
+}
+
+function responseByStatus($arr, $status, $app) {
+    $app->response->setStatus($status);
+    response($arr);
 }
 
 $app = new \Slim\Slim();
 
 $app->response()->header("Content-Type", "application/json");
 
-$app->get('/services/load-all/:secret', function ($secret) use ($cfg, $mongo, $w) {
+$app->get('/services/load-all/:secret', function ($secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $lists = $items->distinct("list");
         sort($lists, SORT_NATURAL);
-
         response(array("msg"=>"All items returned successfully.", "items"=>$lists));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
-$app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w) {
+$app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $data = array("list"=>$list, "deleted"=>false);
@@ -44,8 +49,9 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
                 "strike"=>$item['strike'], "labels"=>$item['labels'], "priority"=>$item['priority'], 
                 "due"=>$item['due']);
         }
-
         response(array("msg"=>"All items returned successfully.", "items"=>$items));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
@@ -86,24 +92,26 @@ $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done
             $mongoId = new MongoID($w->toMongoId($id));
             $items->update(array("_id"=>$mongoId), array('$set'=>$data));
         }
-
         response(array("msg"=>"Saved item.", "id"=>$id, "labels"=>$labels, "priority"=>$priority));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
-$app->get('/services/delete/:id/:secret', function ($id, $secret) use ($cfg, $mongo, $w) {
+$app->get('/services/delete/:id/:secret', function ($id, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $mongoId = new MongoID($w->toMongoId($id));
         // Uncomment this if you want to remove the item completely.
         //$items->remove(array("_id"=>$mongoId));
         $items->update(array("_id"=>$mongoId), array('$set' => array("deleted"=>true)));
-
         response(array("msg"=>"Deleted item."));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
-$app->get('/services/strike/:id/:strike/:secret', function ($id, $strike, $secret) use ($cfg, $mongo, $w) {
+$app->get('/services/strike/:id/:strike/:secret', function ($id, $strike, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $items = $mongo->{$cfg['mongoDatabase']}->items;
         $strike = $strike === true || $strike === "true" ? true : false;
@@ -111,17 +119,19 @@ $app->get('/services/strike/:id/:strike/:secret', function ($id, $strike, $secre
         $items->update(array("_id"=>$mongoId), array('$set' => array("strike"=>$strike)));
 
         $items = $mongo->{$cfg['mongoDatabase']}->items;
-
         response(array("msg"=>"Striked item."));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
-$app->get('/services/clear-poll-queue/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w) {
+$app->get('/services/clear-poll-queue/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $pollQueue = $mongo->{$cfg['mongoDatabase']}->queue;
         $pollQueue->remove(array("sessid"=>$sessid, "list"=>$list));
-
         response(array("msg"=>"Poll queue cleared."));
+    } else {
+        responseByStatus(array("msg"=>"Please authenticate first."), 403, $app);
     }
 });
 
