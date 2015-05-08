@@ -73,4 +73,41 @@ class White {
         return $items;
     }
 
+    public function saveList($list, $id, $done, $text) {
+        // start: process text
+        // Get reminder using strtotime() syntax (e.g. @<Friday 5pm> or @(Friday 5pm))
+        preg_match("/([^\\\])?(@[<\(]\s*)(.*?)(\s*[>\)])/", $text, $m);
+        $due = isset($m[3]) ? $m[3] : "";
+        $text = count($m) > 0 ? str_replace($m[0], $m[1] . ($this->parseForAt($due)), $text) : $text;
+        $done = $done === true || $done === "true" ? true : false;
+        if ($done) {
+            $this->remind($due, $text);
+        }
+
+        // Get label (e.g. #label)
+        preg_match_all("/[^\\\]?#([a-zA-Z0-9-_]+)/", $text, $m);
+        $labels = count($m) > 0 ? $m[1] : array();
+
+        // Get priority (e.g. !10)
+        preg_match("/[^\\\]?!([0-9]+)/", $text, $m);
+        $priority = count($m) > 0 ? $m[1] : 0;
+        // end: process text
+
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $data = array("text"=>$text, "list"=>$list, "labels"=>$labels,
+                "priority"=>$priority, "due"=>$due, "timestamp"=>$this->getTime());
+        if ($id === null || $id === "null") {
+            // This handles a new item.
+            $data['strike'] = false;
+            $data['deleted'] = false;
+            $items->insert($data);
+            $id = $this->toHtmlId($data['_id']->{'$id'});
+        } else {
+            // This handles an update.
+            $mongoId = new MongoID($this->toMongoId($id));
+            $items->update(array("_id"=>$mongoId), array('$set'=>$data));
+        }
+        return array("labels" => $labels, "priority" => $priority);
+    }
+
 }
