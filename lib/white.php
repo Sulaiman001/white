@@ -60,20 +60,20 @@ class White {
 
     public function getList($list) {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
-        $data = array("list"=>$list, "deleted"=>false);
+        $data = array("list" => $list, "deleted" => false);
         //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
         $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
-            $items[] = array("id"=>$this->toHtmlId($item['_id']->{'$id'}), "text"=>$item['text'], 
-                "strike"=>$item['strike'], "labels"=>$item['labels'], "priority"=>$item['priority'], 
-                "due"=>$item['due']);
+            $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'], 
+                "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
+                "due" => $item['due']);
         }
         return $items;
     }
 
-    public function saveList($list, $id, $done, $text) {
+    public function saveListItem($list, $id, $done, $text) {
         // start: process text
         // Get reminder using strtotime() syntax (e.g. @<Friday 5pm> or @(Friday 5pm))
         preg_match("/([^\\\])?(@[<\(]\s*)(.*?)(\s*[>\)])/", $text, $m);
@@ -94,8 +94,8 @@ class White {
         // end: process text
 
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
-        $data = array("text"=>$text, "list"=>$list, "labels"=>$labels,
-                "priority"=>$priority, "due"=>$due, "timestamp"=>$this->getTime());
+        $data = array("text" => $text, "list" => $list, "labels" => $labels,
+                "priority" => $priority, "due" => $due, "timestamp" => $this->getTime());
         if ($id === null || $id === "null") {
             // This handles a new item.
             $data['strike'] = false;
@@ -105,9 +105,24 @@ class White {
         } else {
             // This handles an update.
             $mongoId = new MongoID($this->toMongoId($id));
-            $items->update(array("_id"=>$mongoId), array('$set'=>$data));
+            $items->update(array("_id" => $mongoId), array('$set' => $data));
         }
         return array("labels" => $labels, "priority" => $priority);
+    }
+
+    public function deleteListItem($id) {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $mongoId = new MongoID($this->toMongoId($id));
+        $items->update(array("_id" => $mongoId), array('$set' => array("deleted" => true)));
+        // Uncomment this if you want to remove the item completely.
+        //$items->remove(array("_id" => $mongoId));
+    }
+
+    public function strikeListItem($id, $strike) {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $strike = $strike === true || $strike === "true" ? true : false;
+        $mongoId = new MongoID($this->toMongoId($id));
+        $items->update(array("_id" => $mongoId), array('$set' => array("strike" => $strike)));
     }
 
 }

@@ -44,7 +44,7 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
 $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done, $secret) use ($cfg, $mongo, $app, $w) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $text = $app->request()->post("text");
-        $props = $w->saveList($list, $id, $done, $text);
+        $props = $w->saveListItem($list, $id, $done, $text);
         response(array("msg" => "Saved item.", "id" => $id, "labels" => $props['labels'], "priority" => $props['priority']));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
@@ -53,11 +53,7 @@ $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done
 
 $app->get('/services/delete/:id/:secret', function ($id, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
-        $items = $mongo->{$cfg['mongoDatabase']}->items;
-        $mongoId = new MongoID($w->toMongoId($id));
-        // Uncomment this if you want to remove the item completely.
-        //$items->remove(array("_id" => $mongoId));
-        $items->update(array("_id" => $mongoId), array('$set'  =>  array("deleted" => true)));
+        $w->deleteListItem($id);
         response(array("msg" => "Deleted item."));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
@@ -66,12 +62,7 @@ $app->get('/services/delete/:id/:secret', function ($id, $secret) use ($cfg, $mo
 
 $app->get('/services/strike/:id/:strike/:secret', function ($id, $strike, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
-        $items = $mongo->{$cfg['mongoDatabase']}->items;
-        $strike = $strike === true || $strike === "true" ? true : false;
-        $mongoId = new MongoID($w->toMongoId($id));
-        $items->update(array("_id" => $mongoId), array('$set'  =>  array("strike" => $strike)));
-
-        $items = $mongo->{$cfg['mongoDatabase']}->items;
+        $w->strikeListItem($id, $strike);
         response(array("msg" => "Striked item."));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
