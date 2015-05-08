@@ -69,14 +69,4 @@ $app->get('/services/strike/:id/:strike/:secret', function ($id, $strike, $secre
     }
 });
 
-$app->get('/services/clear-poll-queue/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w, $app) {
-    if ($w->isValid($secret, $cfg['secret'])) {
-        $pollQueue = $mongo->{$cfg['mongoDatabase']}->queue;
-        $pollQueue->remove(array("sessid" => $sessid, "list" => $list));
-        response(array("msg" => "Poll queue cleared."));
-    } else {
-        responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
-    }
-});
-
 $app->run();
