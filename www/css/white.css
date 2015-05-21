@@ -89,3 +89,7 @@ body {
     background-color:#55accc;
     font-weight:bold;
 }
+
+.menu-toggle {
+    padding:8px;
+}

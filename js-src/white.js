@@ -225,6 +225,13 @@ var applyTooltip = function() {
     }
 };
 
+var menuToggle = function() {
+    $(".menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+}
+
 var init = function() {
     "use strict";
     var hash = window.location.hash;
@@ -243,6 +250,7 @@ var init = function() {
             list = "public";
             load(list);
     }
+    menuToggle();
 };
 
 var isUndefined = function(o) {
