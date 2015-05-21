@@ -255,15 +255,55 @@ var getHashVar = function(key) {
 
 var loadAll = function() {
     $("#wt-list-item-0").hide();
+    // Removes all list items if you've previously been on a list
     $(".wt-list-item").remove();
     $("title").text("all lists");
     $.getJSON("services/load-all/" + encodeURIComponent(getHashVar(2)), function(json) {
-        $.each(json.items, function(i, item) {
-            $(".wt-list").append("<div class=\"wt-all-list-item\" data-list=\""
-                    + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
-                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + getHashVar(2) 
-                    + "\">#" + escapeHtml(item) + "</a></div>");
-        });
+        // Mock items for testing grid layout
+        //json.items = [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ];
+
+        var total = $(json.items).size();
+        var large = Math.floor(total / 4);
+        var largeRemainder = total - (large * 3);
+        var medium = Math.floor(total / 2);
+        var mediumRemainder = total - medium;
+        var small = Math.floor(total / 1);
+
+        //console.log("total: " + total + ", large: " + large + ", medium: " + medium + ", small: " 
+        //    + small + ", largeRemainder: " + largeRemainder + ", mediumRemainder: " + mediumRemainder);
+
+        var list = $(".wt-list");
+        if (total >= 4) {
+            list.append("<div class='row'><div class='col-sm-12 col-md-6 col-lg-3' id='list-col-1'></div>"
+                    + "<div class='col-sm-12 col-md-6 col-lg-3' id='list-col-2'></div>"
+                    + "<div class='col-sm-12 col-md-6 col-lg-3' id='list-col-3'></div>"
+                    + "<div class='col-sm-12 col-md-6 col-lg-3' id='list-col-4'></div></div>");
+            $.each(json.items, function(i, item) {
+                var col;
+                if ((i + 1) >= (large * 4)) {
+                    col = $("#list-col-4");
+                } else if ((i + 1) >= (large * 3)) {
+                    col = $("#list-col-3");
+                } else if ((i + 1) >= (large * 2)) {
+                    col = $("#list-col-2");
+                } else {
+                    col = $("#list-col-1");
+                }
+                col.append("<div class=\"wt-all-list-item\" data-list=\""
+                        + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
+                        + "\" href=\"#/list/" + escapeHtml(item) + "/" + getHashVar(2) 
+                        + "\">#" + escapeHtml(item) + "</a></div>");
+            });
+            list.append("</div>");
+        } else {
+            list.append("<div class='row'><div class='columns small-12 medium-12 large-12' id='list-col-1'></div></div>");
+            $.each(json.items, function(i, item) {
+                $("#list-col-1").append("<div class=\"wt-all-list-item\" data-list=\""
+                        + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
+                        + "\" href=\"#/list/" + escapeHtml(item) + "/" + getHashVar(2) 
+                        + "\">#" + escapeHtml(item) + "</a></div>");
+            });
+        }
         applyAllListClick();
     });
 };
