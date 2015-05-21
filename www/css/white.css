@@ -13,6 +13,10 @@ body {
     padding:4px 8px;
 }
 
+li .wt-all-list-item {
+    padding:4px 0px ! important;
+}
+
 .wt-list-wrapper {
 }
 
@@ -92,4 +96,8 @@ body {
 
 .menu-toggle {
     padding:8px;
+}
+
+.burger {
+    margin-right:16px;
 }
