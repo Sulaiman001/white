@@ -260,7 +260,7 @@ var loadAll = function() {
     $("title").text("all lists");
     $.getJSON("services/load-all/" + encodeURIComponent(getHashVar(2)), function(json) {
         // Mock items for testing grid layout
-        //json.items = [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ];
+        //for (var i = 1; i < 100; i++) json.items.push(i);
 
         var total = $(json.items).size();
         var large = Math.floor(total / 4);
@@ -269,9 +269,6 @@ var loadAll = function() {
         var mediumRemainder = total - medium;
         var small = Math.floor(total / 1);
 
-        //console.log("total: " + total + ", large: " + large + ", medium: " + medium + ", small: " 
-        //    + small + ", largeRemainder: " + largeRemainder + ", mediumRemainder: " + mediumRemainder);
-
         var list = $(".wt-list");
         if (total >= 4) {
             list.append("<div class='row'><div class='col-sm-12 col-md-6 col-lg-3' id='list-col-1'></div>"
@@ -279,15 +276,16 @@ var loadAll = function() {
                     + "<div class='col-sm-12 col-md-6 col-lg-3' id='list-col-3'></div>"
                     + "<div class='col-sm-12 col-md-6 col-lg-3' id='list-col-4'></div></div>");
             $.each(json.items, function(i, item) {
+                var coli = i + 1;
                 var col;
-                if ((i + 1) >= (large * 4)) {
-                    col = $("#list-col-4");
-                } else if ((i + 1) >= (large * 3)) {
-                    col = $("#list-col-3");
-                } else if ((i + 1) >= (large * 2)) {
-                    col = $("#list-col-2");
-                } else {
+                if (coli <= largeRemainder) {
                     col = $("#list-col-1");
+                } else if (coli > largeRemainder && coli <= (largeRemainder + (large * 1))) {
+                    col = $("#list-col-2");
+                } else if (coli > (largeRemainder + (large * 1)) && coli <= (largeRemainder + (large * 2))) {
+                    col = $("#list-col-3");
+                } else {
+                    col = $("#list-col-4");
                 }
                 col.append("<div class=\"wt-all-list-item\" data-list=\""
                         + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
