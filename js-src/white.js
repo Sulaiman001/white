@@ -225,6 +225,24 @@ var applyTooltip = function() {
     }
 };
 
+var menuToggle = function() {
+    $(".menu-toggle").unbind("click");
+    $(".menu-toggle").on("click", function(e) {
+        e.preventDefault();
+        var wrapper = $("#wrapper");
+        var clazz = "toggled";
+        if (wrapper.hasClass(clazz)) {
+            wrapper.removeClass(clazz);
+        } else {
+            wrapper.addClass(clazz);
+        }
+    });
+}
+
+var hideSideBar = function() {
+    $("#wrapper").removeClass("toggled");
+};
+
 var init = function() {
     "use strict";
     var hash = window.location.hash;
@@ -235,14 +253,18 @@ var init = function() {
         case "list":
             list = hashVars[2];
             load(list);
+            seedSideBar(hashVars[3]);
             break;
         case "lists":
             loadAll();
+            seedSideBar(hashVars[2]);
             break;
         default:
             list = "public";
             load(list);
+            seedSideBar(hashVars[3]);
     }
+    menuToggle();
 };
 
 var isUndefined = function(o) {
@@ -304,6 +326,18 @@ var loadAll = function() {
         }
         applyAllListClick();
     });
+};
+
+var seedSideBar = function(secret) {
+    $.getJSON("services/load-all/" + encodeURIComponent(secret), function(json) {
+        $.each(json.items, function(i, item) {
+            $(".sidebar-nav").append("<li><div class=\"wt-all-list-item\" data-list=\""
+                    + escapeHtml(item) + "\"><a title=\"#" + escapeHtml(item) 
+                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
+                    + "\">#" + escapeHtml(item) + "</a></div></li>");
+        });
+    });
+    hideSideBar();
 };
 
 var load = function(list) {
@@ -449,5 +483,7 @@ $(document).ready(function(){
 
     applySaveTextOfItem(0);
     applySaveOnEnter(0);
+
+    hideSideBar();
 
 });

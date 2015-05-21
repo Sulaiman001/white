@@ -5,21 +5,35 @@
         <title>White</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="shortcut icon" href="favicon.ico" />
-        <link type="text/css" rel="stylesheet" href="js/bootstrap/3.0.0/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="js/bootstrap/3.3.4/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="css/simple-sidebar.css" />
         <link type="text/css" rel="stylesheet" href="css/white.css" />
     </head>
     <body>
-        <div class="container">
-            <div class="wt-list-wrapper">
-                <div class="wt-list">
-                    <div id="wt-list-item-0" class="wt-list-item-first" data-id="0">
-                        <input class="wt-list-item-input" type="text" id="wt-list-item-input-0" data-id="0" placeholder="Enter new item here" /> 
+        <div class="pull-left burger"><span class="glyphicon glyphicon-menu-hamburger menu-toggle"></span></div>
+        <div id="wrapper" class="toggled">
+            <div id="sidebar-wrapper">
+                <ul class="sidebar-nav">
+                    <li>
+                        <div class="pull-right burger"><span class="glyphicon glyphicon-menu-hamburger menu-toggle"></span></div>
+                    </li>
+                    <li class="sidebar-brand">
+                        <h1><code>white</code></h1>
+                    </li>
+                </ul>
+            </div>
+            <div class="container page-content-wrapper">
+                <div class="wt-list-wrapper">
+                    <div class="wt-list">
+                        <div id="wt-list-item-0" class="wt-list-item-first" data-id="0">
+                            <input class="wt-list-item-input" type="text" id="wt-list-item-input-0" data-id="0" placeholder="Enter new item here" /> 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <script src="js/jquery-1.10.2.min.js"></script>
-        <script src="js/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <script src="js/bootstrap/3.3.4/js/bootstrap.min.js"></script>
         <script src="js/config.js"></script>
         <script src="js/Autolinker.min.js"></script>
         <script src="js/white.min.js"></script>
