@@ -18,7 +18,7 @@
                         <div class="pull-right burger"><span class="glyphicon glyphicon-menu-hamburger menu-toggle"></span></div>
                     </li>
                     <li class="sidebar-brand">
-                        <h1><code>white</code></h1>
+                        <h1><a class="lists-link" href="#"><code>white</code></a></h1>
                     </li>
                 </ul>
             </div>

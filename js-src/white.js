@@ -243,6 +243,10 @@ var hideSideBar = function() {
     $("#wrapper").removeClass("toggled");
 };
 
+var setListsLink = function(secret) {
+    $(".lists-link").attr("href", "#/lists/" + encodeURIComponent(secret));
+};
+
 var init = function() {
     "use strict";
     var hash = window.location.hash;
@@ -254,15 +258,18 @@ var init = function() {
             list = hashVars[2];
             load(list);
             seedSideBar(hashVars[3]);
+            setListsLink(hashVars[3]);
             break;
         case "lists":
             loadAll();
             seedSideBar(hashVars[2]);
+            setListsLink(hashVars[2]);
             break;
         default:
             list = "public";
             load(list);
             seedSideBar(hashVars[3]);
+            setListsLink(hashVars[3]);
     }
     menuToggle();
 };
