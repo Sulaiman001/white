@@ -96,8 +96,7 @@ var applyRemoveItem = function(id) {
     // Remove an item
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
-        $.getJSON("services/delete/" + id 
-                + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
+        $.getJSON("services/delete/" + id + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
             $("#wt-list-item-" + id).remove();
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
@@ -354,30 +353,34 @@ var load = function(list) {
     $("title").text("#" + list);
     $.getJSON("services/load/" + encodeURIComponent(list) 
             + "/" + encodeURIComponent(getHashVar(3)), function(json) {
-        var previd = 0;
-        $.each(json.items, function(i, item) {
-            var id = item.id;
-            var text = item.text;
-            if (i === 0) {
-                previd = 0;
-            }
-            var strike = item.strike ? "wt-strike" : "";
-            var checked = item.strike ? "checked=\"checked\"" : "";
-            $("#wt-list-item-" + previd).after("<div id=\"wt-list-item-" + id 
-                        + "\" class=\"wt-list-item\" data-id=\"" + id 
-                        + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
-                        + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
-                        + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
-                        + "\" " + checked + " title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" 
-                        + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
-                        + "\">" + escapeHtml(text) + "</span></p></div>");
-            applyEditItem(id);
-            applyRemoveItem(id);
-            applyStrikeItem(id);
-            applyTooltip();
-            previd = id;
-        });
+        addListItem(json.items);
+    });
+};
+
+var addListItem = function (items) {
+    var previd = 0;
+    $.each(items, function(i, item) {
+        var id = item.id;
+        var text = item.text;
+        if (i === 0) {
+            previd = 0;
+        }
+        var strike = item.strike ? "wt-strike" : "";
+        var checked = item.strike ? "checked=\"checked\"" : "";
+        $("#wt-list-item-" + previd).after("<div id=\"wt-list-item-" + id 
+                    + "\" class=\"wt-list-item\" data-id=\"" + id 
+                    + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
+                    + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
+                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
+                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
+                    + "\" " + checked + " title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" 
+                    + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
+                    + "\">" + escapeHtml(text) + "</span></p></div>");
+        applyEditItem(id);
+        applyRemoveItem(id);
+        applyStrikeItem(id);
+        applyTooltip();
+        previd = id;
     });
 };
 
