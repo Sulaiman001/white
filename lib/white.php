@@ -73,6 +73,26 @@ class White {
         return $items;
     }
 
+    public function search($q) {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $data = array('$or' => array(
+            array("text" => array('$regex' => $q, '$options' => "i"), "deleted" => false),
+            array("labels" => $q, "deleted" => false),
+            array("priority" => $q, "deleted" => false),
+            array("due" => $q, "deleted" => false)
+        ));
+        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
+        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
+        $items = array();
+        while ($mr->hasNext()) {
+            $item = $mr->getNext();
+            $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'] . " #{$item['list']}", 
+                "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
+                "due" => $item['due']);
+        }
+        return $items;
+    }
+
     public function saveListItem($list, $id, $done, $text) {
         // start: process text
         // Get reminder using strtotime() syntax (e.g. @<Friday 5pm> or @(Friday 5pm))

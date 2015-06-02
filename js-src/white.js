@@ -357,6 +357,20 @@ var load = function(list) {
     });
 };
 
+var search = function (q) {
+    var items = [
+        { id: 42, strike: false, text: "This is a list item" },
+        { id: 43, strike: true, text: "This is a striked list item" },
+        { id: 44, strike: false, text: "This is another list item" },
+        { id: 45, strike: false, text: "This is the best list item" }
+    ];
+    $(".wt-list-item").remove();
+    $.getJSON("services/search/" + encodeURIComponent(q) 
+            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+        addListItem(json.items);
+    });
+};
+
 var addListItem = function (items) {
     var previd = 0;
     $.each(items, function(i, item) {
@@ -495,5 +509,16 @@ $(document).ready(function(){
     applySaveOnEnter(0);
 
     hideSideBar();
+
+    $(".search-button").on("click", function () {
+        search($("#q").val());
+    });
+
+    $("#q").keypress(function (e) {
+        var thiz = $(this);
+        if (e.which === 13 || e.which === 27) {
+            search($("#q").val());
+        }
+    });
 
 });

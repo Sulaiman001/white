@@ -20,6 +20,12 @@
                     <li class="sidebar-brand">
                         <h1><a class="lists-link" href="#"><code>white</code></a></h1>
                     </li>
+                    <li style="padding-left:8px;">
+                        <input type="text" style="width:90%;" class="form-control" id="q" />
+                    </li>
+                    <li>
+                        <button class="btn btn-primary search-button">search</button>
+                    </li>
                 </ul>
             </div>
             <div class="container page-content-wrapper">

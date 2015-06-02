@@ -41,6 +41,14 @@ $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $
     }
 });
 
+$app->get('/services/search/:q/:secret', function ($q, $secret) use ($cfg, $mongo, $w, $app) {
+    if ($w->isValid($secret, $cfg['secret'])) {
+        response(array("msg" => "Search returned successfully.", "items" => $w->search($q)));
+    } else {
+        responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
+    }
+});
+
 $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done, $secret) use ($cfg, $mongo, $app, $w) {
     if ($w->isValid($secret, $cfg['secret'])) {
         $text = $app->request()->post("text");
