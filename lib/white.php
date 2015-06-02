@@ -107,7 +107,7 @@ class White {
             $mongoId = new MongoID($this->toMongoId($id));
             $items->update(array("_id" => $mongoId), array('$set' => $data));
         }
-        return array("labels" => $labels, "priority" => $priority);
+        return array("labels" => $labels, "priority" => $priority, "id" => $id);
     }
 
     public function deleteListItem($id) {

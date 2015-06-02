@@ -45,7 +45,7 @@ $app->post('/services/save/:list/:id/:done/:secret', function ($list, $id, $done
     if ($w->isValid($secret, $cfg['secret'])) {
         $text = $app->request()->post("text");
         $props = $w->saveListItem($list, $id, $done, $text);
-        response(array("msg" => "Saved item.", "id" => $id, "labels" => $props['labels'], "priority" => $props['priority']));
+        response(array("msg" => "Saved item.", "id" => $props['id'], "labels" => $props['labels'], "priority" => $props['priority']));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
     }
