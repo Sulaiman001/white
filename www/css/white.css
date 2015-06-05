@@ -7,14 +7,19 @@ body {
     font-family:'everson', monospace ! important;
 }
 
-.wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text, .wt-all-list-item {
+.wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text {
     width:100%;
     margin:0px;
     padding:4px 8px;
 }
 
+.wt-all-list-item {
+    width:100%;
+    margin:0px;
+}
+
 li .wt-all-list-item {
-    padding:4px 0px ! important;
+    padding:0px 0px ! important;
 }
 
 .wt-list-wrapper {
@@ -24,9 +29,6 @@ li .wt-all-list-item {
 }
 
 .wt-list-item {
-}
-
-.wt-all-list-item {
 }
 
 .wt-list-item, .wt-all-list-item {
@@ -100,4 +102,14 @@ li .wt-all-list-item {
 
 .burger {
     margin-right:16px;
+}
+
+.search-button-list-item {
+    margin-top:4px;
+    margin-bottom:16px;
+}
+
+.search-input-list-item {
+    padding-left:8px;
+    margin-bottom:16px;
 }
