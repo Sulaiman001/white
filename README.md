@@ -96,6 +96,11 @@ You may need to setup URL rewriting to support the clean URLs used by the Slim `
 
 Open `www/index.php` in a browser.
 
+Update the font
+===============
+
+Copy `www/css/example.white-font.ttf` to `www/css/white-font.ttf` or add your own TTF font. Just update `www/css/white-font.ttf` and it will be applied.
+
 Setup Stunnel for SSL encryption for secure web sockets
 ========================================================
 

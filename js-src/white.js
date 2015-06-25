@@ -76,7 +76,6 @@ var escapeHtml = function(html) {
 
 var saveText = function(id, text, done) {
     "use strict"
-    console.log("done: " + done);
     $.ajax({
         type: "POST",
         url: "services/save/" + encodeURIComponent(list) + "/" + id
@@ -110,6 +109,12 @@ var saveText = function(id, text, done) {
 var editing = false;
 var applyEditItem = function(id) {
     "use strict";
+    $(".wt-text a").on("click", function () {
+        console.log("Clicked a link");
+        if (!e) var e = window.event;
+        e.cancelBubble = true;
+        if (e.stopPropagation) e.stopPropagation();
+    });
     $("#wt-text-" + id).on("click", function() {
         editing = true;
         var id = $(this).data("id");
@@ -239,7 +244,6 @@ var applySaveOnEnter = function(id) {
             doApplySaveOnEnter(thiz, e);
         });
         if (e.which === 13 || e.which === 27) {
-            console.log("saving 27");
             doApplySaveOnEnter(thiz, e);
         }
     });

@@ -1,10 +1,13 @@
 @font-face {
-    font-family:'everson';
-    src: url('everson_mono_latin.ttf');
+    font-family: 'white-font';
+    font-style: normal;
+    font-weight: 400;
+    src: url('white-font.ttf');
 }
 
 body {
-    font-family:'everson', monospace ! important;
+    font-family:'white-font', sans-serif ! important;
+    font-size:1.75em;
 }
 
 .wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text {
@@ -72,6 +75,7 @@ li .wt-all-list-item {
 }
 
 .wt-text {
+    min-width:95%;
 }
 
 .wt-list-item-input:focus, wt-list-item-input:active {
