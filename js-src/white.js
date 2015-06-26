@@ -303,10 +303,8 @@ var init = function() {
             setListsLink(hashVars[2]);
             break;
         default:
-            list = "public";
-            load(list);
-            seedSideBar(hashVars[3]);
-            setListsLink(hashVars[3]);
+            window.location.hash = "#/list/inbox/" + hashVars[1];
+            break;
     }
     menuToggle();
 };
