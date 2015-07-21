@@ -1,4 +1,5 @@
-var list = "public";
+var list = "inbox";
+var loadKey = list;
 
 // start: websocket config
 var connected = false;
@@ -33,6 +34,7 @@ var escapeHtml = function(html) {
     var text = autolinker.link(jQuery("<div/>").text(html).html());
 
     var priorityStyle = "";
+// This commented priorityStyle was to have automatic priority coloring.
 //    var priority = parseInt(text.replace(/^.*([^\\])?!([0-9]+).*$/, "$2"));
 //    if (!isNaN(priority)) {
 //        var r = (85 + Math.pow(priority, 2)) % 256;
@@ -83,6 +85,7 @@ var saveText = function(id, text, done) {
         data: { text: text },
         dataType: "json",
         success: function(json) {
+            localStorage.removeItem(loadKey);
             if (id === null) {
                 $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
                         + "\" class=\"wt-list-item\" data-id=\"" + json.id 
@@ -136,6 +139,7 @@ var applyRemoveItem = function(id) {
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
         $.getJSON("services/delete/" + id + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
+            localStorage.removeItem(loadKey);
             $("#wt-list-item-" + id).remove();
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
@@ -159,6 +163,7 @@ var applyStrikeItem = function(id) {
         }
         $.getJSON("services/strike/" + id + "/" + strike
                 + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+            localStorage.removeItem(loadKey);
             var item = $("#wt-list-item-" + id);
 
             if (strike) {
@@ -293,6 +298,7 @@ var init = function() {
     switch(hashVars[1]) {
         case "list":
             list = hashVars[2];
+            loadKey = "list-" + list;
             load(list);
             seedSideBar(hashVars[3]);
             setListsLink(hashVars[3]);
@@ -387,10 +393,24 @@ var load = function(list) {
     $(".wt-list-item").remove();
     $(".wt-all-list-item").remove();
     $("title").text("#" + list);
-    $.getJSON("services/load/" + encodeURIComponent(list) 
-            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+    var loadKey = "list-" + list;
+    if (localStorage.getItem(loadKey) != null) {
+        var json = JSON.parse(localStorage.getItem(loadKey));
         addListItem(json.items);
-    });
+    } else {
+        $.getJSON("services/load/" + encodeURIComponent(list) 
+                + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+            if (localStorage.getItem(loadKey) == null) {
+                localStorage.setItem(loadKey, JSON.stringify(json));
+            }
+            addListItem(json.items);
+        }).fail(function() {
+            if (localStorage.getItem(loadKey) != null) {
+                var json = JSON.parse(localStorage.getItem(loadKey));
+                addListItem(json.items);
+            }
+        });
+    }
 };
 
 var search = function (q) {
