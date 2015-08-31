@@ -53,8 +53,26 @@ class White {
 
     public function getAllLists() {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
-        $lists = $items->distinct("list");
-        sort($lists, SORT_NATURAL);
+
+        $lists = array();
+        if ($this->cfg['list-sort-order'] === "ascending") {
+            // Simple return a sorted list
+            $lists = $items->distinct("list");
+            sort($lists, SORT_NATURAL);
+        } else if ($this->cfg['list-sort-order'] === "last-modified") {
+            // Return list in descending order by last modified
+            $mr = $items->find()->sort(array("timestamp" => -1));
+            $lists = array();
+            while ($mr->hasNext()) {
+                $lists[] = $mr->getNext()['list'];
+            }
+            $lists = array_unique($lists);
+        } else {
+            // Simple return a sorted list
+            $lists = $items->distinct("list");
+            sort($lists, SORT_NATURAL);
+        }
+
         return $lists;
     }
 

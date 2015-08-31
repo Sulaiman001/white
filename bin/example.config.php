@@ -20,3 +20,7 @@ $cfg['due-subject-prefix'] = "[white]";
 // The todo list item will be truncated at this number of characters in the subject field.
 // The body will contain the entire todo list item.
 $cfg['due-truncate-subject-at'] = 32;
+
+// Sort todo lists in left sidebar.
+// Values: last-modified, ascending
+$cfg['list-sort-order'] = "ascending";
