@@ -136,13 +136,19 @@ class White implements MessageComponentInterface {
 
     public function unsetListUserClient($client) {
         $key = false;
-        if (is_array($this->listUsers[$this->getList($client)])) {
-            $key = array_search($this->getUsername($client), 
-                    $this->listUsers[$this->getList($client)]);
+        if (isset($this->listUsers)) {
+            if (is_array($this->listUsers[$this->getList($client)])) {
+                $key = array_search($this->getUsername($client), 
+                        $this->listUsers[$this->getList($client)]);
+            }
         }
         if ($key) {
-            unset($this->listUsers[$this->lists[$client->resourceId]['list']][$key]);
-            unset($this->lists[$client->resourceId]);
+            if (isset($this->listUsers)) {
+                unset($this->listUsers[$this->lists[$client->resourceId]['list']][$key]);
+            }
+            if (isset($this->lists)) {
+                unset($this->lists[$client->resourceId]);
+            }
         }
     }
 

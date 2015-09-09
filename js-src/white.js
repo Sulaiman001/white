@@ -76,6 +76,40 @@ var escapeHtml = function(html) {
     return text;
 };
 
+var escapeApos = function(str) {
+    if (list === null) {
+        return str;
+    }
+    if (list === "") {
+        return str;
+    }
+    if (undefined === str) {
+        return str;
+    }
+    return str.replace(/'/, "\\'");
+};
+
+var escapeQuotes = function(str) {
+    if (list === null) {
+        return str;
+    }
+    if (list === "") {
+        return str;
+    }
+    if (undefined === str) {
+        return str;
+    }
+    return str.replace(/"/, '\\"');
+};
+
+var moveListItemToTop = function(list) {
+    var listItem = $(".wt-all-list-item[data-list='" + escapeApos(list) + "']").parent();
+    listItem.fadeTo(500, 0);
+    listItem.detach();
+    $(".search-input-list-item").after(listItem);
+    listItem.fadeTo(500, 1);
+}
+
 var saveText = function(id, text, done) {
     "use strict"
     $.ajax({
@@ -85,6 +119,8 @@ var saveText = function(id, text, done) {
         data: { text: text },
         dataType: "json",
         success: function(json) {
+            moveListItemToTop(list);
+
             localStorage.removeItem(loadKey);
             if (id === null) {
                 $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
@@ -139,6 +175,8 @@ var applyRemoveItem = function(id) {
     $("#wt-list-item-chk-done-" + id).on("click", function() {
         var id = $(this).data("id");
         $.getJSON("services/delete/" + id + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
+            moveListItemToTop(list);
+
             localStorage.removeItem(loadKey);
             $("#wt-list-item-" + id).remove();
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
@@ -163,6 +201,8 @@ var applyStrikeItem = function(id) {
         }
         $.getJSON("services/strike/" + id + "/" + strike
                 + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+            moveListItemToTop(list);
+
             localStorage.removeItem(loadKey);
             var item = $("#wt-list-item-" + id);
 
