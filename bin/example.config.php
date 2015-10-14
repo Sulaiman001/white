@@ -24,3 +24,7 @@ $cfg['due-truncate-subject-at'] = 32;
 // Sort todo lists in left sidebar.
 // Values: last-modified, ascending
 $cfg['list-sort-order'] = "ascending";
+
+// Configure the date format for each todo item. Uses PHP's date() function,
+// http://php.net/manual/en/function.date.php
+$cfg['date-format'] = "F j, Y, g:i a";

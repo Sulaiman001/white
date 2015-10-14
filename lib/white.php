@@ -84,10 +84,11 @@ class White {
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
+            $timestamp = preg_replace("/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*$/", "\${1}", $item['timestamp']);
+            $display_timestamp = date($this->cfg['date-format'], strtotime($timestamp));
             $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'], 
                 "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
-                "due" => $item['due'], "timestamp" => 
-                    preg_replace("/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*$/", "\${1}", $item['timestamp']));
+                "due" => $item['due'], "timestamp" => $display_timestamp);
         }
         return $items;
     }
