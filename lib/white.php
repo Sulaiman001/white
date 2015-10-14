@@ -79,14 +79,15 @@ class White {
     public function getList($list) {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
         $data = array("list" => $list, "deleted" => false);
-        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => 1));
-        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
+        $mr = $items->find($data)->sort(array("strike" => 1, "priority" => 1, "timestamp" => -1));
+        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
             $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'], 
                 "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
-                "due" => $item['due']);
+                "due" => $item['due'], "timestamp" => 
+                    preg_replace("/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*$/", "\${1}", $item['timestamp']));
         }
         return $items;
     }

@@ -117,3 +117,8 @@ li .wt-all-list-item {
     padding-left:8px;
     margin-bottom:16px;
 }
+
+.timestamp {
+    color:silver;
+    font-size:0.75em;
+}

@@ -479,7 +479,7 @@ var addListItem = function (items) {
                     + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
                     + "\" " + checked + " title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" 
                     + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
-                    + "\">" + escapeHtml(text) + "</span></p></div>");
+                    + "\">" + escapeHtml(text) + "</span> <span class=\"timestamp\">" + item.timestamp + "</span></p></div>");
         applyEditItem(id);
         applyRemoveItem(id);
         applyStrikeItem(id);
