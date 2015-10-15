@@ -146,7 +146,12 @@ var saveText = function(id, text, done) {
 };
 
 
-var addStrikeHeader = function() {
+var addStrikeHeader = function(forceHeaderRemoval) {
+    if (forceHeaderRemoval) {
+        if ($(".wt-strikes-header").size() > 0) {
+            $(".wt-strikes-header").remove();
+        }
+    }
     if ($(".wt-strike").size() > 0) {
         // There are striked items but no header. Add one.
         if ($(".wt-strikes-header").size() === 0) {
@@ -232,7 +237,7 @@ var applyStrikeItem = function(id) {
                 $(".wt-strike:first").parent().parent().before(item);
             }
 
-            addStrikeHeader();
+            addStrikeHeader(true);
 
             conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
         }).fail(function() {
@@ -461,6 +466,7 @@ var load = function(list) {
     if (localStorage.getItem(loadKey) != null) {
         var json = JSON.parse(localStorage.getItem(loadKey));
         addListItem(json.items);
+        addStrikeHeader(true);
     } else {
         $.getJSON("services/load/" + encodeURIComponent(list) 
                 + "/" + encodeURIComponent(getHashVar(3)), function(json) {
@@ -469,11 +475,12 @@ var load = function(list) {
             }
             addListItem(json.items);
 
-            addStrikeHeader();
+            addStrikeHeader(true);
         }).fail(function() {
             if (localStorage.getItem(loadKey) != null) {
                 var json = JSON.parse(localStorage.getItem(loadKey));
                 addListItem(json.items);
+                addStrikeHeader(true);
             }
         });
     }

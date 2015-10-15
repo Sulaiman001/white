@@ -9,6 +9,7 @@ body {
     font-family:'white-font', sans-serif ! important;
     font-size:1.5em;
     color:#606060;
+    font-weight:100;
 }
 
 .wt-list-wrapper, .wt-list, .wt-list-item, .wt-list-item-first, .wt-list-item-input, .wt-list-item-text {
