@@ -72,7 +72,8 @@ li .wt-all-list-item {
 
 .wt-strike {
     /*text-decoration:line-through;*/
-    color:silver;
+    /*color:silver;*/
+    opacity:0.5;
 }
 
 .wt-text {
