@@ -145,6 +145,23 @@ var saveText = function(id, text, done) {
     });
 };
 
+
+var addStrikeHeader = function() {
+    if ($(".wt-strike").size() > 0) {
+        // There are striked items but no header. Add one.
+        if ($(".wt-strikes-header").size() === 0) {
+            $(".wt-strike:first").parent().parent()
+                    .before("<h1 class=\"wt-strikes-header\">These items are marked done</h1>");
+        }
+    } else {
+        // There is an existing strikes header but we've un-striked everything.
+        // Remove the header.
+        if ($(".wt-strikes-header").size() > 0) {
+            $(".wt-strikes-header").remove();
+        }
+    }
+};
+
 var editing = false;
 var applyEditItem = function(id) {
     "use strict";
@@ -179,6 +196,9 @@ var applyRemoveItem = function(id) {
 
             localStorage.removeItem(loadKey);
             $("#wt-list-item-" + id).remove();
+
+            addStrikeHeader();
+
             conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
         });
     });
@@ -211,6 +231,8 @@ var applyStrikeItem = function(id) {
             } else if ($(".wt-strike").size() > 0) {
                 $(".wt-strike:first").parent().parent().before(item);
             }
+
+            addStrikeHeader();
 
             conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
         }).fail(function() {
@@ -413,6 +435,8 @@ var loadAll = function() {
             });
         }
         applyAllListClick();
+
+        addStrikeHeader();
     });
 };
 
@@ -444,6 +468,8 @@ var load = function(list) {
                 localStorage.setItem(loadKey, JSON.stringify(json));
             }
             addListItem(json.items);
+
+            addStrikeHeader();
         }).fail(function() {
             if (localStorage.getItem(loadKey) != null) {
                 var json = JSON.parse(localStorage.getItem(loadKey));
