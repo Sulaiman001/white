@@ -7,9 +7,11 @@ var reConnecting = false;
 var room = "";
 var username = "";
 var conn = null;
+// Can't strip prefix and truncate until editing pulls in the real
+// item otherwise you'll save a broken URL.
 var autolinker = new Autolinker({
-    stripPrefix: true,
-    truncate: 16,
+    stripPrefix: false,
+    //truncate: 16,
     newWindow: true
 });
 // end: websocket config
