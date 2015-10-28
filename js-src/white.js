@@ -8,8 +8,8 @@ var room = "";
 var username = "";
 var conn = null;
 var autolinker = new Autolinker({
-    stripPrefix: false,
-    //truncate: 32,
+    stripPrefix: true,
+    truncate: 16,
     newWindow: true
 });
 // end: websocket config
