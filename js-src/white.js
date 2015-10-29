@@ -112,6 +112,18 @@ var moveListItemToTop = function(list) {
     listItem.fadeTo(500, 1);
 }
 
+var buildDoneCheckbox = function (id) {
+    return "<input type=\"checkbox\" data-id=\"" 
+        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" 
+        + id + "\" title=\"" + removeTitle() + "\" />";
+};
+
+var buildStrikeCheckbox = function (id) {
+    return "<input type=\"checkbox\" data-id=\"" 
+        + id + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" 
+        + id + "\" title=\"" + strikeTitle() + "\" />";
+};
+
 var saveText = function(id, text, done) {
     "use strict"
     $.ajax({
@@ -127,11 +139,9 @@ var saveText = function(id, text, done) {
             if (id === null) {
                 $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
                         + "\" class=\"wt-list-item\" data-id=\"" + json.id 
-                        + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                        + json.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + json.id 
-                        + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + json.id 
-                        + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + json.id 
-                        + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
+                        + "\"><p class=\"wt-list-item-text\">" + buildDoneCheckbox(json.id) 
+                        + " " + buildStrikeCheckbox(json.id) + " <span id=\"wt-text-" 
+                        + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
                         + "\">" + escapeHtml(text) + "</span></p></div>");
                 conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
                 applyEditItem(json.id);
@@ -291,11 +301,9 @@ var doApplySaveOnEnter = function(thiz, e) {
         saveText(null, text, true);
     } else {
         // TODO: Retrieve the post-processed text instead of what the user entered. Primarily to grab the @<syntax>
-        $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
-                + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
-                + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
-                + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
+        $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\">" 
+                + buildDoneCheckbox(id) + " " + buildStrikeCheckbox(id) 
+                + " <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
                 + "\">" + escapeHtml(text) + "</span></p>");
         applyEditItem(id);
         applyRemoveItem(id);
@@ -507,14 +515,12 @@ var addListItem = function (items) {
         var strike = item.strike ? "wt-strike" : "";
         var checked = item.strike ? "checked=\"checked\"" : "";
         $("#wt-list-item-" + previd).after("<div id=\"wt-list-item-" + id 
-                    + "\" class=\"wt-list-item\" data-id=\"" + id 
-                    + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                    + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + id 
-                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + id 
-                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + id 
-                    + "\" " + checked + " title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" 
-                    + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
-                    + "\">" + escapeHtml(text) + "</span> <span class=\"timestamp\">" + item.timestamp + "</span></p></div>");
+            + "\" class=\"wt-list-item\" data-id=\"" + id 
+            + "\"><p class=\"wt-list-item-text\">" 
+            + buildDoneCheckbox(id) + " " + buildStrikeCheckbox(id) + " <span id=\"wt-text-" 
+            + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
+            + "\">" + escapeHtml(text) + "</span> <span class=\"timestamp\">" 
+            + item.timestamp + "</span></p></div>");
         applyEditItem(id);
         applyRemoveItem(id);
         applyStrikeItem(id);
@@ -543,13 +549,11 @@ var handleMessage = function(json) {
             $("#wt-list-item-" + jsonObj.id).remove();
         } else if (jsonObj.actiontype === "add") {
             $("#wt-list-item-0").after("<div id=\"wt-list-item-" + jsonObj.id 
-                    + "\" class=\"wt-list-item\" data-id=\"" + jsonObj.id 
-                    + "\"><p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                    + jsonObj.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + jsonObj.id 
-                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + jsonObj.id 
-                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + jsonObj.id 
-                    + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
-                    + "\">" + jsonObj.text + "</span></p></div>");
+                + "\" class=\"wt-list-item\" data-id=\"" + jsonObj.id 
+                + "\"><p class=\"wt-list-item-text\">" 
+                + buildDoneCheckbox(jsonObj.id) + " " + buildStrikeCheckbox(jsonObj.id) 
+                + " <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
+                + "\">" + jsonObj.text + "</span></p></div>");
             applyEditItem(jsonObj.id);
             applyRemoveItem(jsonObj.id);
             applyStrikeItem(jsonObj.id);
@@ -557,12 +561,10 @@ var handleMessage = function(json) {
             applySaveOnEnter(jsonObj.id);
             applyTooltip();
         } else if (jsonObj.actiontype === "save") {
-            $("#wt-list-item-" + jsonObj.id).html("<p class=\"wt-list-item-text\"><input type=\"checkbox\" data-id=\"" 
-                    + jsonObj.id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" + jsonObj.id 
-                    + "\" title=\"" + removeTitle() + "\" /> <input type=\"checkbox\" data-id=\"" + jsonObj.id 
-                    + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" + jsonObj.id 
-                    + "\" title=\"" + strikeTitle() + "\" /> <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
-                    + "\">" + jsonObj.text + "</span></p>");
+            $("#wt-list-item-" + jsonObj.id).html("<p class=\"wt-list-item-text\">" 
+                + buildDoneCheckbox(jsonObj.id) + " " + buildStrikeCheckbox(jsonObj.id) 
+                + " <span id=\"wt-text-" + jsonObj.id + "\" class=\"wt-text\" data-id=\"" + jsonObj.id 
+                + "\">" + jsonObj.text + "</span></p>");
             applyEditItem(jsonObj.id);
             applyRemoveItem(jsonObj.id);
             applyStrikeItem(jsonObj.id);
