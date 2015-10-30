@@ -113,15 +113,21 @@ var moveListItemToTop = function(list) {
 }
 
 var buildDoneCheckbox = function (id) {
-    return "<input type=\"checkbox\" data-id=\"" 
-        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" 
-        + id + "\" title=\"" + removeTitle() + "\" />";
+//    return "<input type=\"checkbox\" data-id=\"" 
+//        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" 
+//        + id + "\" title=\"" + removeTitle() + "\" />";
+    return "<span data-id=\"" 
+        + id + "\" class=\"wt-list-item-chk-done btn-tooltip glyphicon glyphicon-trash\" id=\"wt-list-item-chk-done-" 
+        + id + "\" title=\"" + removeTitle() + "\">&nbsp;</span>";
 };
 
 var buildStrikeCheckbox = function (id) {
     return "<input type=\"checkbox\" data-id=\"" 
         + id + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" 
         + id + "\" title=\"" + strikeTitle() + "\" />";
+//    return "<span type=\"checkbox\" data-id=\"" 
+//        + id + "\" class=\"wt-list-item-chk-strike btn-tooltip glyphicon glyphicon-ok\" id=\"wt-list-item-chk-strike-" 
+//        + id + "\" title=\"" + strikeTitle() + "\">&nbsp;</span>";
 };
 
 var saveText = function(id, text, done) {
@@ -231,10 +237,15 @@ var applyStrikeItem = function(id) {
         if (!text.hasClass("wt-strike")) {
             strike = true;
         }
+        // used when buildStrikeCheckbox() adds a checkmark
+        // currently disabled
+        var chbx = $("#wt-list-item-chk-strike-" + id);
         if (strike) {
             text.addClass("wt-strike");
+            //chbx.css("color", "green");
         } else {
             text.removeClass("wt-strike");
+            //chbx.css("color", "black");
         }
         $.getJSON("services/strike/" + id + "/" + strike
                 + "/" + encodeURIComponent(getHashVar(3)), function(json) {
