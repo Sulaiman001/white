@@ -113,9 +113,6 @@ var moveListItemToTop = function(list) {
 }
 
 var buildDoneCheckbox = function (id) {
-//    return "<input type=\"checkbox\" data-id=\"" 
-//        + id + "\" class=\"wt-list-item-chk-done btn-tooltip\" id=\"wt-list-item-chk-done-" 
-//        + id + "\" title=\"" + removeTitle() + "\" />";
     return "<span data-id=\"" 
         + id + "\" class=\"wt-list-item-chk-done btn-tooltip glyphicon glyphicon-trash\" id=\"wt-list-item-chk-done-" 
         + id + "\" title=\"" + removeTitle() + "\">&nbsp;</span>";
@@ -125,9 +122,6 @@ var buildStrikeCheckbox = function (id) {
     return "<input type=\"checkbox\" data-id=\"" 
         + id + "\" class=\"wt-list-item-chk-strike btn-tooltip\" id=\"wt-list-item-chk-strike-" 
         + id + "\" title=\"" + strikeTitle() + "\" />";
-//    return "<span type=\"checkbox\" data-id=\"" 
-//        + id + "\" class=\"wt-list-item-chk-strike btn-tooltip glyphicon glyphicon-ok\" id=\"wt-list-item-chk-strike-" 
-//        + id + "\" title=\"" + strikeTitle() + "\">&nbsp;</span>";
 };
 
 var saveText = function(id, text, done) {
@@ -213,6 +207,10 @@ var applyRemoveItem = function(id) {
     "use strict";
     // Remove an item
     $("#wt-list-item-chk-done-" + id).on("click", function() {
+        var doit = confirm("Confirm delete please");
+        if (!doit) {
+            return;
+        }
         var id = $(this).data("id");
         $.getJSON("services/delete/" + id + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
             moveListItemToTop(list);
