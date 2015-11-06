@@ -143,7 +143,9 @@ var saveText = function(id, text, done) {
                         + " " + buildStrikeCheckbox(json.id) + " <span id=\"wt-text-" 
                         + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
                         + "\">" + escapeHtml(text) + "</span></p></div>");
-                conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
+                if (useWebSockets) {
+                    conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
+                }
                 applyEditItem(json.id);
                 applyRemoveItem(json.id);
                 applyStrikeItem(json.id);
@@ -151,7 +153,9 @@ var saveText = function(id, text, done) {
                 applySaveOnEnter(json.id);
                 applyTooltip();
             } else {
-                conn.send(JSON.stringify({"a": "message", "actiontype": "save", "list": list, "text": text, "id": json.id}));
+                if (useWebSockets) {
+                    conn.send(JSON.stringify({"a": "message", "actiontype": "save", "list": list, "text": text, "id": json.id}));
+                }
             }
         }
     });
@@ -220,7 +224,9 @@ var applyRemoveItem = function(id) {
 
             addStrikeHeader();
 
-            conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
+            if (useWebSockets) {
+                conn.send(JSON.stringify({"a": "message", "actiontype": "remove", "list": list, "id": id}));
+            }
         });
     });
 };
@@ -260,7 +266,9 @@ var applyStrikeItem = function(id) {
 
             addStrikeHeader(true);
 
-            conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
+            if (useWebSockets) {
+                conn.send(JSON.stringify({"a": "message", "actiontype": "strike", "list": list, "strike": strike, "id": id}));
+            }
         }).fail(function() {
             if (strike) {
                 text.removeClass("wt-strike");
@@ -593,7 +601,9 @@ var qs = function(name) {
 }
 
 var startConnection = function() {
-    "use strict";
+    if (!useWebSockets) {
+        return;
+    }
     if (!connected) {
         conn = new WebSocket(webSocketUrl);
 
