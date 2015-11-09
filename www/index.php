@@ -24,11 +24,6 @@
                     <li class="search-input-list-item">
                         <input type="text" style="width:90%;" class="form-control" id="q" placeholder="Search..." />
                     </li>
-                    <!--
-                    <li class="search-button-list-item">
-                        <button class="btn btn-primary search-button">search</button>
-                    </li>
-                    -->
                 </ul>
             </div>
             <div class="container page-content-wrapper">
