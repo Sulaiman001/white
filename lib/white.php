@@ -106,7 +106,7 @@ class White {
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
-            $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'] . " #{$item['list']}", 
+            $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => "#{$item['list']} " . $item['text'], 
                 "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
                 "due" => $item['due']);
         }
