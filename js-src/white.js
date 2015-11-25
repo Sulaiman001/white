@@ -36,44 +36,12 @@ var escapeHtml = function(html) {
     var text = autolinker.link(jQuery("<div/>").text(html).html());
 
     var priorityStyle = "";
-// This commented priorityStyle was to have automatic priority coloring.
-//    var priority = parseInt(text.replace(/^.*([^\\])?!([0-9]+).*$/, "$2"));
-//    if (!isNaN(priority)) {
-//        var r = (85 + Math.pow(priority, 2)) % 256;
-//        var g = (172 + Math.pow(priority, 2)) % 256;
-//        var b = (204 + Math.pow(priority, 1)) % 256;
-//        r = (r + 50) % 256;
-//        g = (g + 50) % 256;
-//        b = (b + 50) % 256;
-//
-//        var total = r + g + b;
-//        var rf = 0;
-//        var gf = 0;
-//        var bf = 0;
-//        if (total < ((255 * 3) / 3)) {
-//            rf = r + (85 * 2) % 256;
-//            gf = g + (85 * 2) % 256;
-//            bf = b + (85 * 2) % 256;
-//        } else if (total >= ((255 * 3) / 3) && total < (((255 * 3) / 3) * 2)) {
-//            rf = r + (85) % 256;
-//            gf = g + (85) % 256;
-//            bf = b + (85) % 256;
-//        } else {
-//            rf = r - (85 * 2) % 256;
-//            gf = g - (85 * 2) % 256;
-//            bf = b - (85 * 2) % 256;
-//        }
-//
-//        priorityStyle = "style=\"background-color:rgba(" + r + ", " + g + ", " + b 
-//                + ", 1) ! important; color:rgba(" + rf + ", " + gf + ", " + bf + ", 1) ! important;\"";
-//    }
 
     // TODO: This will not be needed when items are pulled from services on save.
     text = text.replace(/@&lt;(.*?)&gt;/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/@\((.*?)\)/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([0-9]{1,2}:[0-9]{1,2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
-    //jtext = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\">$2</span>");
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\"" + priorityStyle + ">$2</span>");
     return text;
 };
