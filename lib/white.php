@@ -80,7 +80,6 @@ class White {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
         $data = array("list" => $list, "deleted" => false);
         $mr = $items->find($data)->sort(array("strike" => 1, "timestamp" => -1, "priority" => 1));
-        //$mr = $items->find($data)->sort(array("strike" => 1, "priority" => -1));
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
