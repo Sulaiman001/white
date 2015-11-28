@@ -1,5 +1,5 @@
-white - simple list web app
-===========================
+white - a web app for managing lists of things
+==============================================
 
 A todo list as simple as a piece of paper - powered by HTML5, CSS, jQuery, Web Sockets, PHP, Slim for RESTful API, and MongoDB. Lists are always kept up-to-date in real time on all open and running clients via the power of Web Sockets.
 
