@@ -6,7 +6,7 @@
         <title>White</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="shortcut icon" href="favicon.ico" />
-        <link type="text/css" rel="stylesheet" href="js/bootstrap/3.3.4/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="js/bootstrap/release/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" href="css/simple-sidebar.css" />
         <link type="text/css" rel="stylesheet" href="css/white.css" />
     </head>
