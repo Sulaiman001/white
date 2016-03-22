@@ -364,6 +364,7 @@ var init = function() {
             load(list);
             seedSideBar(hashVars[3]);
             setListsLink(hashVars[3]);
+            setPlaceholder(list);
             break;
         case "lists":
             loadAll();
@@ -452,6 +453,24 @@ var seedSideBar = function(secret) {
     hideSideBar();
 };
 
+var escapeDoubleQuotes = function(str) {
+    if (undefined === str) {
+        return str;
+    }
+    if (str === null) {
+        return str;
+    }
+    return str.replace(/"/, "\\\"");
+}
+
+var buildPlaceholder = function(list) {
+    return "Add to #" + list;
+}
+
+var setPlaceholder = function(list) {
+    $("#wt-list-item-input-0").attr("placeholder", escapeDoubleQuotes(buildPlaceholder(list)));
+}
+
 var load = function(list) {
     $("#wt-list-item-0").show();
     $(".wt-list-item").remove();
@@ -471,6 +490,8 @@ var load = function(list) {
             addListItem(json.items);
 
             addStrikeHeader(true);
+
+            setPlaceholder(list);
         }).fail(function() {
             if (localStorage.getItem(loadKey) != null) {
                 var json = JSON.parse(localStorage.getItem(loadKey));
