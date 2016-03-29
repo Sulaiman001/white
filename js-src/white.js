@@ -41,21 +41,29 @@ var escapeHtml = function(html) {
 
     var priorityStyle = "";
 
-    // TODO: This will not be needed when items are pulled from services on save.
+    // reminders
     text = text.replace(/@&lt;(.*?)&gt;/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/@\((.*?)\)/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([0-9]{1,2}:[0-9]{1,2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
-    // #bug
+
+    // #bug label
     text = text.replace(/([^\\])?(#bug)/g, "$1<span class=\"label label-bug\">$2</span>");
-    // #feature
+
+    // #feature label
     text = text.replace(/([^\\])?(#feature)/g, "$1<span class=\"label label-feature\">$2</span>");
-    // #improvement
+
+    // #improvement label
     text = text.replace(/([^\\])?(#improvement)/g, "$1<span class=\"label label-improvement\">$2</span>");
-    // #enhancement
+
+    // #enhancement label
     text = text.replace(/([^\\])?(#enhancement)/g, "$1<span class=\"label label-enhancement\">$2</span>");
+
     // All other labels (The issue status labels wrap the standard label)
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
+
+    // Priority
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\"" + priorityStyle + ">$2</span>");
+
     return text;
 };
 
@@ -520,12 +528,14 @@ var load = function(list) {
     }
 };
 
+/**
+ * The callback is expected to operate on a single list item.
+ */
 var loadItem = function (id, list, callback) {
     $.getJSON("services/load/" + encodeURIComponent(list) 
             + "/" + id + "/" + encodeURIComponent(getHashVar(3)), function(json) {
-        //json.items
-        // {"msg":"All items returned successfully.","items":[{"id":"wt54924ccce8c88b8a2207fee2","text":"Change air filter in house.","strike":false,"labels":[],"priority":0,"due":"","timestamp":"December 17, 2014, 10:41 pm"}]}
         if (json.items.length > 0) {
+            // There should only be one item returned. We filter by the MongoId().
             callback(json.items[0]);
         } else {
             alert("Could not find list item " + id + " for list " + list);
