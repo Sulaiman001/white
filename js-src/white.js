@@ -105,12 +105,13 @@ var saveText = function(id, text, done) {
 
             localStorage.removeItem(loadKey);
             if (id === null) {
+                var markon = new Markon();
                 $("#wt-list-item-0").after("<div id=\"wt-list-item-" + json.id 
                         + "\" class=\"wt-list-item\" data-id=\"" + json.id 
                         + "\"><p class=\"wt-list-item-text\">" + buildDoneCheckbox(json.id) 
                         + " " + buildStrikeCheckbox(json.id) + " <span id=\"wt-text-" 
                         + json.id + "\" class=\"wt-text\" data-id=\"" + json.id 
-                        + "\">" + escapeHtml(text) + "</span></p></div>");
+                        + "\">" + markon.render(escapeHtml(text)) + "</span></p></div>");
                 if (useWebSockets) {
                     conn.send(JSON.stringify({"a": "message", "actiontype": "add", "list": list, "text": text, "id": json.id}));
                 }
@@ -285,11 +286,12 @@ var doApplySaveOnEnter = function(thiz, e) {
     if (id === 0) {
         saveText(null, text, true);
     } else {
+        var markon = new Markon();
         // TODO: Retrieve the post-processed text instead of what the user entered. Primarily to grab the @<syntax>
         $("#wt-list-item-" + id).html("<p class=\"wt-list-item-text\">" 
                 + buildDoneCheckbox(id) + " " + buildStrikeCheckbox(id) 
                 + " <span id=\"wt-text-" + id + "\" class=\"wt-text\" data-id=\"" + id 
-                + "\">" + escapeHtml(text) + "</span></p>");
+                + "\">" + markon.render(escapeHtml(text)) + "</span></p>");
         applyEditItem(id);
         applyRemoveItem(id);
         applyStrikeItem(id);
@@ -511,6 +513,7 @@ var search = function (q) {
 };
 
 var addListItem = function (items) {
+    var markon = new Markon(); 
     var previd = 0;
     $.each(items, function(i, item) {
         var id = item.id;
@@ -525,7 +528,7 @@ var addListItem = function (items) {
             + "\"><p class=\"wt-list-item-text\">" 
             + buildDoneCheckbox(id) + " " + buildStrikeCheckbox(id) + " <span id=\"wt-text-" 
             + id + "\" class=\"wt-text " + strike + "\" data-id=\"" + id 
-            + "\">" + escapeHtml(text) + "</span> <span class=\"timestamp\">" 
+            + "\">" + markon.render(escapeHtml(text)) + "</span> <span class=\"timestamp\">" 
             + item.timestamp + "</span></p></div>");
         applyEditItem(id);
         applyRemoveItem(id);
@@ -628,6 +631,25 @@ var reConnect = function() {
         init();
         setTimeout(reConnect, 2000);
     }
+}
+
+function Markon() {
+}
+
+Markon.prototype.render = function(str) {
+    var mutators = [ this.code ];
+    var html = str;
+    for (m = 0; m < mutators.length; m++) {
+        html = mutators[m](html);
+    }
+    return html;
+}
+
+Markon.prototype.code = function(str) {
+    if (undefined === str || str === null || str.length === 0) {
+        return str;
+    }
+    return str.replace(/`(.*?)`/g, "<code>$1</code>");
 }
 
 $(document).ready(function(){
