@@ -522,7 +522,7 @@ var load = function(list) {
 
 var loadItem = function (id, list, callback) {
     $.getJSON("services/load/" + encodeURIComponent(list) 
-            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+            + "/" + id + "/" + encodeURIComponent(getHashVar(3)), function(json) {
         //json.items
         // {"msg":"All items returned successfully.","items":[{"id":"wt54924ccce8c88b8a2207fee2","text":"Change air filter in house.","strike":false,"labels":[],"priority":0,"due":"","timestamp":"December 17, 2014, 10:41 pm"}]}
         if (json.items.length > 0) {
