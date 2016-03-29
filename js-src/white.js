@@ -41,7 +41,17 @@ var escapeHtml = function(html) {
     text = text.replace(/@&lt;(.*?)&gt;/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/@\((.*?)\)/, "<span class=\"label label-remind\">$1</span>");
     text = text.replace(/([0-9]{1,2}:[0-9]{1,2} [0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/, "<span class=\"label label-remind\">$1</span>");
+    // #bug
+    text = text.replace(/([^\\])?(#bug)/g, "$1<span class=\"label label-bug\">$2</span>");
+    // #feature
+    text = text.replace(/([^\\])?(#feature)/g, "$1<span class=\"label label-feature\">$2</span>");
+    // #improvement
+    text = text.replace(/([^\\])?(#improvement)/g, "$1<span class=\"label label-improvement\">$2</span>");
+    // #enhancement
+    text = text.replace(/([^\\])?(#enhancement)/g, "$1<span class=\"label label-enhancement\">$2</span>");
+    // All other labels (The issue status labels wrap the standard label)
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
+
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\"" + priorityStyle + ">$2</span>");
     return text;
 };
@@ -166,6 +176,8 @@ var applyEditItem = function(id) {
         var id = $(this).data("id");
         var markon = new Markon();
         // TODO: This text() calls messes up Markon.unRender(). No longer HTML to unRender().
+        // Also see: var escapeHtml = function(html) {
+        // TODO: This will not be needed when items are pulled from services on save.
         var clickedText = $("#wt-text-" + id).text();
         $("#wt-list-item-" + id)
                 .html("<input class=\"wt-list-item-input\" type=\"text\" id=\"wt-list-item-input-" 

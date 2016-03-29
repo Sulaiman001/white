@@ -96,6 +96,24 @@ li .wt-all-list-item {
     background-color:#d8c5e5;
 }
 
+.label-bug {
+    color:white;
+    font-weight:bold;
+    background-color:#ea7777;
+}
+
+.label-feature {
+    color:white;
+    font-weight:bold;
+    background-color:#56a0ea;
+}
+
+.label-enhancement, .label-improvement {
+    color:white;
+    font-weight:bold;
+    background-color:#2fbf69;
+}
+
 .label-priority {
     color:white;
     background-color:#55accc;
