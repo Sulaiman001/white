@@ -33,9 +33,19 @@ $app->get('/services/load-all/:secret', function ($secret) use ($cfg, $mongo, $w
     }
 });
 
+// Loads all items from list
 $app->get('/services/load/:list/:secret', function ($list, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
         response(array("msg" => "All items returned successfully.", "items" => $w->getList($list)));
+    } else {
+        responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
+    }
+});
+
+// Loads a single list item
+$app->get('/services/load/:list/:id/:secret', function ($list, $id, $secret) use ($cfg, $mongo, $w, $app) {
+    if ($w->isValid($secret, $cfg['secret'])) {
+        response(array("msg" => "All items returned successfully.", "items" => $w->getListItem($id, $list)));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
     }

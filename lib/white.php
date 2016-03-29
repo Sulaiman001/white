@@ -92,6 +92,22 @@ class White {
         return $items;
     }
 
+    public function getListItem($id, $list) {
+        $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
+        $data = array("_id" => new MongoId($this->toMongoId($id)), "list" => $list, "deleted" => false);
+        $mr = $items->find($data)->sort(array("strike" => 1, "timestamp" => -1, "priority" => 1));
+        $items = array();
+        while ($mr->hasNext()) {
+            $item = $mr->getNext();
+            $timestamp = preg_replace("/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*$/", "\${1}", $item['timestamp']);
+            $display_timestamp = date($this->cfg['date-format'], strtotime($timestamp));
+            $items[] = array("id" => $this->toHtmlId($item['_id']->{'$id'}), "text" => $item['text'], 
+                "strike" => $item['strike'], "labels" => $item['labels'], "priority" => $item['priority'], 
+                "due" => $item['due'], "timestamp" => $display_timestamp);
+        }
+        return $items;
+    }
+
     public function search($q) {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
         $data = array('$or' => array(

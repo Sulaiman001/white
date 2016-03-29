@@ -1,3 +1,4 @@
+// This is the default list
 var list = "inbox";
 var loadKey = list;
 
@@ -15,6 +16,9 @@ var autolinker = new Autolinker({
     newWindow: true
 });
 // end: websocket config
+
+var prevtime = new Date();
+var curval;
 
 var p = function(str) {
     "use strict";
@@ -51,7 +55,6 @@ var escapeHtml = function(html) {
     text = text.replace(/([^\\])?(#enhancement)/g, "$1<span class=\"label label-enhancement\">$2</span>");
     // All other labels (The issue status labels wrap the standard label)
     text = text.replace(/([^\\])?(#[a-zA-Z0-9-_]+)/g, "$1<span class=\"label label-label\">$2</span>");
-
     text = text.replace(/([^\\])?(![0-9]+)/, "$1<span class=\"label label-priority\"" + priorityStyle + ">$2</span>");
     return text;
 };
@@ -166,7 +169,6 @@ var editing = false;
 var applyEditItem = function(id) {
     "use strict";
     $(".wt-text a").on("click", function () {
-        console.log("Clicked a link");
         if (!e) var e = window.event;
         e.cancelBubble = true;
         if (e.stopPropagation) e.stopPropagation();
@@ -175,18 +177,18 @@ var applyEditItem = function(id) {
         editing = true;
         var id = $(this).data("id");
         var markon = new Markon();
-        // TODO: This text() calls messes up Markon.unRender(). No longer HTML to unRender().
-        // Also see: var escapeHtml = function(html) {
-        // TODO: This will not be needed when items are pulled from services on save.
-        var clickedText = $("#wt-text-" + id).text();
-        $("#wt-list-item-" + id)
-                .html("<input class=\"wt-list-item-input\" type=\"text\" id=\"wt-list-item-input-" 
-                    + id + "\" data-id=\"" + id + "\" placeholder=\"Enter new item here\" />");
-        $("#wt-list-item-input-" + id).val(markon.unRender(clickedText));
-        $("#wt-list-item-input-" + id).focus();
-        applySaveTextOfItem(id);
-        applySaveOnEnter(id);
-        applyTooltip();
+        var list = getHashVar(2);
+        loadItem(id, list, function (json) {
+            var clickedText = json.text;
+            $("#wt-list-item-" + id)
+                    .html("<input class=\"wt-list-item-input\" type=\"text\" id=\"wt-list-item-input-" 
+                        + id + "\" data-id=\"" + id + "\" placeholder=\"Enter new item here\" />");
+            $("#wt-list-item-input-" + id).val(clickedText);
+            $("#wt-list-item-input-" + id).focus();
+            applySaveTextOfItem(id);
+            applySaveOnEnter(id);
+            applyTooltip();
+        });
     });
 };
 
@@ -517,6 +519,21 @@ var load = function(list) {
         });
     }
 };
+
+var loadItem = function (id, list, callback) {
+    $.getJSON("services/load/" + encodeURIComponent(list) 
+            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+        //json.items
+        // {"msg":"All items returned successfully.","items":[{"id":"wt54924ccce8c88b8a2207fee2","text":"Change air filter in house.","strike":false,"labels":[],"priority":0,"due":"","timestamp":"December 17, 2014, 10:41 pm"}]}
+        if (json.items.length > 0) {
+            callback(json.items[0]);
+        } else {
+            alert("Could not find list item " + id + " for list " + list);
+        }
+    }).fail(function() {
+        alert("Could not load list item " + id + " for list " + list);
+    });
+}
 
 var search = function (q) {
     $(".wt-list-item").remove();
