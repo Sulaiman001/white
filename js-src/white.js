@@ -164,11 +164,13 @@ var applyEditItem = function(id) {
     $("#wt-text-" + id).on("click", function() {
         editing = true;
         var id = $(this).data("id");
+        var markon = new Markon();
+        // TODO: This text() calls messes up Markon.unRender(). No longer HTML to unRender().
         var clickedText = $("#wt-text-" + id).text();
         $("#wt-list-item-" + id)
                 .html("<input class=\"wt-list-item-input\" type=\"text\" id=\"wt-list-item-input-" 
                     + id + "\" data-id=\"" + id + "\" placeholder=\"Enter new item here\" />");
-        $("#wt-list-item-input-" + id).val(clickedText);
+        $("#wt-list-item-input-" + id).val(markon.unRender(clickedText));
         $("#wt-list-item-input-" + id).focus();
         applySaveTextOfItem(id);
         applySaveOnEnter(id);
@@ -637,7 +639,14 @@ function Markon() {
 }
 
 Markon.prototype.render = function(str) {
-    var mutators = [ this.code ];
+    return this.mutate(str, [ this.code ]);
+}
+
+Markon.prototype.unRender = function(str) {
+    return this.mutate(str, [ this.unCode ]);
+}
+
+Markon.prototype.mutate = function(str, mutators) {
     var html = str;
     for (m = 0; m < mutators.length; m++) {
         html = mutators[m](html);
@@ -650,6 +659,13 @@ Markon.prototype.code = function(str) {
         return str;
     }
     return str.replace(/`(.*?)`/g, "<code>$1</code>");
+}
+
+Markon.prototype.unCode = function(str) {
+    if (undefined === str || str === null || str.length === 0) {
+        return str;
+    }
+    return str.replace(/<code>(.*?)<\/code>/g, "`$1`");
 }
 
 $(document).ready(function(){
