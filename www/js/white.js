@@ -482,27 +482,16 @@ var seedSideBar = function(secret) {
 }
 
 var sortSideBar = function(field, direction) {
-//    var items = $(".wt-all-list-item-li");
-//    if (field === "list-name") {
-//        if (direction === "asc") {
-//            items.sort(function (a, b) {
-//                var aa = $(a).find(".wt-all-list-item-a").text().replace(/^#/, "") || "";
-//                var bb = $(bb).find(".wt-all-list-item-a").text().replace(/^#/, "") || "";
-//                var ret = 0;
-//                try {
-//                    p(aa);
-//                    ret = aa.localCompare(bb);
-//                } catch (ex) {
-//                    console.log("caught it: " + ex);
-//                    ret = 0;
-//                }
-//                return ret;
-//                //return $(a).find(".wt-all-list-item-a").text()
-//                //        .localCompare($(b).find(".wt-all-list-item-a").text());
-//                //return 1;
-//            });
-//        }
-//    }
+    var items = $(".wt-all-list-item-li");
+    if (field === "list-name") {
+        if (direction === "asc") {
+            items.sort(function (a, b) {
+                var aa = $(a).find(".wt-all-list-item-a").text().replace(/^#/, "") || "";
+                var bb = $(bb).find(".wt-all-list-item-a").text().replace(/^#/, "") || "";
+                return aa.localeCompare(bb);
+            });
+        }
+    }
 }
 
 var escapeDoubleQuotes = function(str) {
