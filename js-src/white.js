@@ -470,12 +470,29 @@ var loadAll = function() {
 
 var seedSideBar = function(secret) {
     $.getJSON("services/load-all/" + encodeURIComponent(secret), function(json) {
-        $.each(json.items, function(i, item) {
-            $(".sidebar-nav").append("<li class=\"wt-all-list-item-li\"><div class=\"wt-all-list-item\" data-list=\""
-                    + escapeHtml(item) + "\"><a class=\"wt-all-list-item-a\" title=\"#" + escapeHtml(item) 
-                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
-                    + "\">#" + escapeHtml(item) + "</a></div></li>");
+        var items = $.map(json.items, function(value, index) {
+            return [value];
         });
+        //var colors = { red:"#e22d2d", orange:"#e5ba1d", yellow:"#dde23b", green:"#21c621", blue:"#3a82e0", purple:"#a43ddb" };
+        var colors = [ "#e22d2d", "#e5ba1d", "#dde23b", "#21c621", "#3a82e0", "#a43ddb" ];
+        var split = Math.ceil(items.length / colors.length);
+        var c = 0;
+        for (var j = 0; j < items.length; j += split) {
+            var jj = j / 10;
+            if (jj % split === 0) {
+                c = 0;
+            }
+            var chunk = items.slice(j, j + split);
+            $.each(chunk, function(i, item) {
+                var style = " style = 'color:" + colors[c] + ";' ";
+
+                $(".sidebar-nav").append("<li class=\"wt-all-list-item-li\"><div class=\"wt-all-list-item\" data-list=\""
+                        + escapeHtml(item) + "\"><a class=\"wt-all-list-item-a\" " + style + " title=\"#" + escapeHtml(item) 
+                        + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
+                        + "\">#" + escapeHtml(item) + "</a></div></li>");
+            });
+            c++;
+        }
         sortSideBar("list-name", "asc");
     });
     hideSideBar();
