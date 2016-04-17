@@ -146,3 +146,7 @@ li .wt-all-list-item {
 .wt-strikes-header {
     font-size:1.5em;
 }
+
+code {
+    color:#404040 ! important;
+}

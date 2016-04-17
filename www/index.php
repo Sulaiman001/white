@@ -40,6 +40,6 @@
         <script src="js/bootstrap/release/js/bootstrap.min.js"></script>
         <script src="js/config.js"></script>
         <script src="js/Autolinker.min.js"></script>
-        <script src="js/white.min.js"></script>
+        <script src="js/white.js"></script>
     </body>
 </html>
