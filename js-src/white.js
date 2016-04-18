@@ -476,28 +476,36 @@ var seedSideBar = function(secret) {
         var sortedItems = $.map(json.items, function(value, index) {
             return [value];
         });
-        var sortedItems.sort();
+        sortedItems.sort();
         // red, orange, yellow, green, blue, purple
-        var colors = [ "#e22d2d", "#e5ba1d", "#dde23b", "#21c621", "#3a82e0", "#a43ddb" ];
+        //var colors = [ "#e22d2d", "#e5ba1d", "#dde23b", "#21c621", "#3a82e0", "#a43ddb" ];
+        var colors = [ "#960000", "#937d00", "#b7b100", "#108e00", "#00438c", "#590089" ];
         //var colors = [ "#606060" ];
         var split = Math.ceil(items.length / colors.length);
-        var c = 0;
-        for (var j = 0; j < items.length; j += split) {
-            var jj = j / 10;
-            if (jj % split === 0) {
-                c = 0;
+        $.each(items, function(i, item) {
+            var c = 0;
+            var style = "";
+            for (var j = 0; j < sortedItems.length; j += split) {
+                var jj = j / 10;
+                if (jj % split === 0) {
+                    c = 0;
+                }
+                var chunk = sortedItems.slice(j, j + split);
+                $.each(chunk, function(i, item2) {
+                    if (item2 === item) {
+                        style = " style = 'color:" + colors[c] + ";' ";
+                        console.log("Does '" + item2 + "' = '" + item + "'? " + style);
+                    }
+                });
+                c++;
             }
-            var chunk = items.slice(j, j + split);
-            $.each(chunk, function(i, item) {
-                var style = " style = 'color:" + colors[c] + ";' ";
 
-                $(".sidebar-nav").append("<li class=\"wt-all-list-item-li\"><div class=\"wt-all-list-item\" data-list=\""
-                        + escapeHtml(item) + "\"><a class=\"wt-all-list-item-a\" " + style + " title=\"#" + escapeHtml(item) 
-                        + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
-                        + "\">#" + escapeHtml(item) + "</a></div></li>");
-            });
-            c++;
-        }
+            $(".sidebar-nav").append("<li class=\"wt-all-list-item-li\"><div class=\"wt-all-list-item\" data-list=\""
+                    + escapeHtml(item) + "\"><a class=\"wt-all-list-item-a\" " + style + " title=\"#" + escapeHtml(item) 
+                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
+                    + "\">#" + escapeHtml(item) + "</a></div></li>");
+        });
+
         sortSideBar("list-name", "asc");
     });
     hideSideBar();
