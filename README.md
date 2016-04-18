@@ -10,7 +10,7 @@ Example: `https://www.example.com/white/www/#/list/stuff-to-remember/a39f9b023c0
 You may also see all lists in the system at `#/lists/{secret}`. See below in the
 INSTALL section for information. You will need to configure `{secret}` in `bin/config.php`.
 
-Lists will by default be sorted as follows. All items with a priority will be at the top of the list and sort descending (e.g. `!3 !2 !1`). All items marked done will be at the bottom of the list and sorted descending by last modified date. The last updated will be at the top. All other items will be inbetween items with a priority and those without a priority and sorted by last modified descending as well. Note, the default priority is `!0` so entering this directly in an item will have no effect. It will be sorted in the middle along with items that are not done and have no set priority.
+Lists are sorted by last modified descending, with a rainbow subsort. Rainbow sorting is new and best described by example. First we have chosen only 6 of the rainbow colors to maintain high contrast between each color. We have: red, orange, yellow, green, blue, purple. Next we count the number of lists and divide by 6 (the number of colors). This number is called the split. The list of items is copied and sorted so that the first items in alphabetical order are red. The first 'split' number of them. Then the next split is colored orange, and so on until purple. This is all done so that when viewing the list of last modified lists you can look for the red items and know that they are first alphabetical, and the purple items are last alphabetical. It's just a simple way to see two sorting algorithms at the same time.
 
 Syntax
 ======
