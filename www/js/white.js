@@ -473,9 +473,13 @@ var seedSideBar = function(secret) {
         var items = $.map(json.items, function(value, index) {
             return [value];
         });
+        var sortedItems = $.map(json.items, function(value, index) {
+            return [value];
+        });
+        var sortedItems.sort();
         // red, orange, yellow, green, blue, purple
         var colors = [ "#e22d2d", "#e5ba1d", "#dde23b", "#21c621", "#3a82e0", "#a43ddb" ];
-        var colors = [ "#606060" ];
+        //var colors = [ "#606060" ];
         var split = Math.ceil(items.length / colors.length);
         var c = 0;
         for (var j = 0; j < items.length; j += split) {
