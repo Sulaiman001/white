@@ -2,6 +2,10 @@
 var list = "inbox";
 var loadKey = list;
 
+// These are the default sort orders for lists
+var direction = 1;
+var type = "text";
+
 // start: websocket config
 var connected = false;
 var reConnecting = false;
@@ -21,9 +25,13 @@ var prevtime = new Date();
 var curval;
 var t;
 
+var enc = function (str) {
+    return encodeURIComponent(str);
+}
+
 var p = function(str) {
     "use strict";
-    "use strict"
+    console.debug(str);
 }
 
 var removeTitle = function() {
@@ -118,8 +126,8 @@ var saveText = function(id, text, done) {
     "use strict"
     $.ajax({
         type: "POST",
-        url: "services/save/" + encodeURIComponent(list) + "/" + id
-                + "/" + done + "/" + encodeURIComponent(getHashVar(3)),
+        url: "services/save/" + enc(list) + "/" + id
+                + "/" + done + "/" + enc(getHashVar(3)),
         data: { text: text },
         dataType: "json",
         success: function(json) {
@@ -210,7 +218,7 @@ var applyRemoveItem = function(id) {
             return;
         }
         var id = $(this).data("id");
-        $.getJSON("services/delete/" + id + "/" + encodeURIComponent(getHashVar(3)) , function(json) {
+        $.getJSON("services/delete/" + id + "/" + enc(getHashVar(3)) , function(json) {
             moveListItemToTop(list);
 
             localStorage.removeItem(loadKey);
@@ -246,7 +254,7 @@ var applyStrikeItem = function(id) {
             //chbx.css("color", "black");
         }
         $.getJSON("services/strike/" + id + "/" + strike
-                + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+                + "/" + enc(getHashVar(3)), function(json) {
             moveListItemToTop(list);
 
             localStorage.removeItem(loadKey);
@@ -375,7 +383,7 @@ var hideSideBar = function() {
 }
 
 var setListsLink = function(secret) {
-    $(".lists-link").attr("href", "#/lists/" + encodeURIComponent(secret));
+    $(".lists-link").attr("href", "#/lists/" + enc(secret));
 }
 
 var init = function() {
@@ -418,7 +426,7 @@ var loadAll = function() {
     // Removes all list items if you've previously been on a list
     $(".wt-list-item").remove();
     $("title").text("all lists");
-    $.getJSON("services/load-all/" + encodeURIComponent(getHashVar(2)), function(json) {
+    $.getJSON("services/load-all/" + enc(getHashVar(2)), function(json) {
         // Mock items for testing grid layout
         //for (var i = 1; i < 100; i++) json.items.push(i);
 
@@ -469,7 +477,7 @@ var loadAll = function() {
 }
 
 var seedSideBar = function(secret) {
-    $.getJSON("services/load-all/" + encodeURIComponent(secret), function(json) {
+    $.getJSON("services/load-all/" + enc(secret), function(json) {
         var items = $.map(json.items, function(value, index) {
             return [value];
         });
@@ -485,24 +493,25 @@ var seedSideBar = function(secret) {
         $.each(items, function(i, item) {
             var c = 0;
             var style = "";
-            for (var j = 0; j < sortedItems.length; j += split) {
-                var jj = j / 10;
-                if (jj % split === 0) {
-                    c = 0;
-                }
-                var chunk = sortedItems.slice(j, j + split);
-                $.each(chunk, function(i, item2) {
-                    if (item2 === item) {
-                        style = " style = 'color:" + colors[c] + ";' ";
-                        console.log("Does '" + item2 + "' = '" + item + "'? " + style);
-                    }
-                });
-                c++;
-            }
+            // Disable
+//            for (var j = 0; j < sortedItems.length; j += split) {
+//                var jj = j / 10;
+//                if (jj % split === 0) {
+//                    c = 0;
+//                }
+//                var chunk = sortedItems.slice(j, j + split);
+//                $.each(chunk, function(i, item2) {
+//                    if (item2 === item) {
+//                        style = " style = 'color:" + colors[c] + ";' ";
+//                        console.log("Does '" + item2 + "' = '" + item + "'? " + style);
+//                    }
+//                });
+//                c++;
+//            }
 
             $(".sidebar-nav").append("<li class=\"wt-all-list-item-li\"><div class=\"wt-all-list-item\" data-list=\""
                     + escapeHtml(item) + "\"><a class=\"wt-all-list-item-a\" " + style + " title=\"#" + escapeHtml(item) 
-                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + encodeURIComponent(secret) 
+                    + "\" href=\"#/list/" + escapeHtml(item) + "/" + enc(secret) 
                     + "\">#" + escapeHtml(item) + "</a></div></li>");
         });
 
@@ -542,10 +551,27 @@ var setPlaceholder = function(list) {
     $("#wt-list-item-input-0").attr("placeholder", escapeDoubleQuotes(buildPlaceholder(list)));
 }
 
-var load = function(list) {
+var clearListBeforeLoading = function (sort) {
+    // This if is because we don't need to re-order the left navbar
+    // This remove() would remove all lists from the left navbar and not put them back.
+    if (undefined !== sort && null !== sort) {
+        $(".wt-all-list-item").remove();
+    }
     $("#wt-list-item-0").show();
     $(".wt-list-item").remove();
-    $(".wt-all-list-item").remove();
+};
+
+var resetSortButtonActive = function () {
+    $(".sort-direction").removeClass("active");
+    $(".sort-type").removeClass("active");
+    //$(".sort-asc").addClass("active");
+    //$(".sort-alpha").addClass("active");
+}
+
+var load = function(list) {
+    resetSortButtonActive();
+
+    clearListBeforeLoading();
     $("title").text("#" + list);
     var loadKey = "list-" + list;
     if (localStorage.getItem(loadKey) != null) {
@@ -553,8 +579,8 @@ var load = function(list) {
         addListItem(json.items);
         addStrikeHeader(true);
     } else {
-        $.getJSON("services/load/" + encodeURIComponent(list) 
-                + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+        $.getJSON("services/load/" + enc(list) 
+                + "/" + enc(getHashVar(3)), function(json) {
             if (localStorage.getItem(loadKey) == null) {
                 localStorage.setItem(loadKey, JSON.stringify(json));
             }
@@ -577,8 +603,8 @@ var load = function(list) {
  * The callback is expected to operate on a single list item.
  */
 var loadItem = function (id, list, callback) {
-    $.getJSON("services/load/" + encodeURIComponent(list) 
-            + "/" + id + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+    $.getJSON("services/load/" + enc(list) 
+            + "/" + id + "/" + enc(getHashVar(3)), function(json) {
         if (json.items.length > 0) {
             // There should only be one item returned. We filter by the MongoId().
             callback(json.items[0]);
@@ -592,8 +618,8 @@ var loadItem = function (id, list, callback) {
 
 var search = function (q) {
     $(".wt-list-item").remove();
-    $.getJSON("services/search/" + encodeURIComponent(q) 
-            + "/" + encodeURIComponent(getHashVar(3)), function(json) {
+    $.getJSON("services/search/" + enc(q) 
+            + "/" + enc(getHashVar(3)), function(json) {
         addListItem(json.items);
     });
 }
@@ -719,6 +745,33 @@ var reConnect = function() {
     }
 }
 
+var getListByOrder = function (direction, type, list, secret, thiz) {
+    if (thiz.hasClass("sort-direction")) {
+        $(".sort-direction").removeClass("active");
+        thiz.addClass("active");
+    }
+    if (thiz.hasClass("sort-type")) {
+        $(".sort-type").removeClass("active");
+        thiz.addClass("active");
+    }
+
+    clearListBeforeLoading();
+    $.getJSON("services/sort/" + direction + "/type/" + enc(type) + "/list/" + enc(list)
+            + "/" + enc(secret), function (json) {
+        addListItem(json.items);
+
+        addStrikeHeader(true);
+
+        setPlaceholder(list);
+    }).fail(function() {
+        if (localStorage.getItem(loadKey) != null) {
+            var json = JSON.parse(localStorage.getItem(loadKey));
+            addListItem(json.items);
+            addStrikeHeader(true);
+        }
+    });
+};
+
 function Markon() {
 }
 
@@ -776,6 +829,31 @@ $(document).ready(function(){
         if (e.which === 13 || e.which === 27) {
             search($("#q").val());
         }
+    });
+
+    $(".sort-box.sort-asc").on("click", function () {
+        direction = 1;
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-alpha").on("click", function () {
+        type = "text";
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-label").on("click", function () {
+        type = "labels";
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-priority").on("click", function () {
+        type = "priority";
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-time").on("click", function () {
+        type = "timestamp";
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-desc").on("click", function () {
+        direction = -1;
+        getListByOrder(direction, type, list, getHashVar(3), $(this));
     });
 
 });

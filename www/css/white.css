@@ -151,3 +151,7 @@ li .wt-all-list-item {
 code {
     color:#404040 ! important;
 }
+
+.btn, button, i, .active {
+    outline:0;
+}

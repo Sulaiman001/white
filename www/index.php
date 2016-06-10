@@ -9,6 +9,7 @@
         <link type="text/css" rel="stylesheet" href="js/bootstrap/release/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" href="css/simple-sidebar.css" />
         <link type="text/css" rel="stylesheet" href="css/white.css" />
+        <link type="text/css" rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
     </head>
     <body>
         <div class="pull-left burger"><span class="glyphicon glyphicon-menu-hamburger menu-toggle"></span></div>
@@ -31,6 +32,32 @@
                     <div class="wt-list">
                         <div id="wt-list-item-0" class="wt-list-item-first" data-id="0">
                             <input class="wt-list-item-input" type="text" id="wt-list-item-input-0" data-id="0" placeholder="Enter new item here" /> 
+                            <div id="wt-list-item-sort" class="wt-list-item-no btn-group" data-id="sort" role="group">
+                                <button class="active btn btn-xs btn-default sort-box sort-direction sort-asc btn-tooltip"
+                                        title="Sort ascending">
+                                    <i class="fa fa-sort-amount-asc"></i>
+                                </button>
+                                <button class="active sort-box sort-alpha sort-type btn btn-xs btn-primary active btn-tooltip"
+                                        title="Sort alpha/numeric">
+                                    <i class="fa fa-book"></i>
+                                </button>
+                                <button class="sort-box sort-label sort-type btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort labels alpha/numeric">
+                                    <i class="fa fa-hashtag"></i>
+                                </button>
+                                <button class="sort-box sort-priority sort-type btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort by priority">
+                                    <i class="fa fa-exclamation"></i>
+                                </button>
+                                <button class="sort-box sort-time sort-type btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort by timestamp">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                                <button class="btn btn-xs btn-default sort-box sort-direction sort-desc btn-tooltip"
+                                        title="Sort descending">
+                                    <i class="fa fa-sort-amount-desc"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -76,10 +76,24 @@ class White {
         return $lists;
     }
 
-    public function getList($list) {
+    public function getList($list, $direction=null, $type=null) {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
         $data = array("list" => $list, "deleted" => false);
-        $mr = $items->find($data)->sort(array("strike" => 1, "timestamp" => -1, "priority" => 1));
+        if (is_null($direction) && is_null($type)) {
+            $sort = array("strike" => 1, "timestamp" => -1, "priority" => 1);
+        } else {
+            $negative = false;
+            if (preg_match("/-/", $direction)) {
+                $negative = true;
+            }
+            if ($negative) {
+                $direction = -1;
+            } else {
+                $direction = 1;
+            }
+            $sort = array($type => $direction, "strike" => 1);
+        }
+        $mr = $items->find($data)->sort($sort);
         $items = array();
         while ($mr->hasNext()) {
             $item = $mr->getNext();
@@ -90,6 +104,10 @@ class White {
                 "due" => $item['due'], "timestamp" => $display_timestamp);
         }
         return $items;
+    }
+
+    public function getListByOrder($list, $direction, $type) {
+        return $this->getList($list, $direction, $type);
     }
 
     public function getListItem($id, $list) {
