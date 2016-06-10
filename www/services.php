@@ -51,9 +51,10 @@ $app->get('/services/load/:list/:id/:secret', function ($list, $id, $secret) use
     }
 });
 
-$app->get('/services/sort/:direction/type/:type/list/:list/:secret', function ($direction, $type, $list, $secret) use ($cfg, $mongo, $w, $app) {
+$app->get('/services/sort/:direction/type/:type/sort/:direction2/type/:type2/list/:list/:secret', 
+        function ($direction, $type, $direction2, $type2,$list, $secret) use ($cfg, $mongo, $w, $app) {
     if ($w->isValid($secret, $cfg['secret'])) {
-        response(array("msg" => "All items returned successfully.", "items" => $w->getListByOrder($list, $direction, $type)));
+        response(array("msg" => "All items returned successfully.", "items" => $w->getListByOrder($list, $direction, $type, $direction2, $type2)));
     } else {
         responseByStatus(array("msg" => "Please authenticate first."), 403, $app);
     }

@@ -76,12 +76,13 @@ class White {
         return $lists;
     }
 
-    public function getList($list, $direction=null, $type=null) {
+    public function getList($list, $direction=null, $type=null, $direction2=null, $type2=null) {
         $items = $this->mongo->{$this->cfg['mongoDatabase']}->items;
         $data = array("list" => $list, "deleted" => false);
         if (is_null($direction) && is_null($type)) {
             $sort = array("strike" => 1, "timestamp" => -1, "priority" => 1);
         } else {
+            // sort order 1
             $negative = false;
             if (preg_match("/-/", $direction)) {
                 $negative = true;
@@ -91,7 +92,19 @@ class White {
             } else {
                 $direction = 1;
             }
-            $sort = array($type => $direction, "strike" => 1);
+
+            // sort order 2
+            $negative = false;
+            if (preg_match("/-/", $direction2)) {
+                $negative = true;
+            }
+            if ($negative) {
+                $direction2 = -1;
+            } else {
+                $direction2 = 1;
+            }
+
+            $sort = array($type => $direction, $type2 => $direction2, "strike" => 1);
         }
         $mr = $items->find($data)->sort($sort);
         $items = array();
@@ -106,8 +119,8 @@ class White {
         return $items;
     }
 
-    public function getListByOrder($list, $direction, $type) {
-        return $this->getList($list, $direction, $type);
+    public function getListByOrder($list, $direction, $type, $direction2, $type2) {
+        return $this->getList($list, $direction, $type, $direction2, $type2);
     }
 
     public function getListItem($id, $list) {

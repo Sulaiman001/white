@@ -5,6 +5,8 @@ var loadKey = list;
 // These are the default sort orders for lists
 var direction = 1;
 var type = "text";
+var direction2 = 1;
+var type2 = "timestamp";
 
 // start: websocket config
 var connected = false;
@@ -567,6 +569,11 @@ var resetSortButtonActiveFirstLoad = function () {
     $(".sort-type").removeClass("active");
     $(".sort-asc").addClass("active");
     $(".sort-alpha").addClass("active");
+
+    $(".sort-direction-2").removeClass("active");
+    $(".sort-type-2").removeClass("active");
+    $(".sort-asc-2").addClass("active");
+    $(".sort-time-2").addClass("active");
 }
 
 var load = function(list) {
@@ -746,7 +753,7 @@ var reConnect = function() {
     }
 }
 
-var getListByOrder = function (direction, type, list, secret, thiz) {
+var getListByOrder = function (direction, type, direction2, type2, list, secret, thiz) {
     if (thiz.hasClass("sort-direction")) {
         $(".sort-direction").removeClass("active");
         thiz.addClass("active");
@@ -755,9 +762,17 @@ var getListByOrder = function (direction, type, list, secret, thiz) {
         $(".sort-type").removeClass("active");
         thiz.addClass("active");
     }
+    if (thiz.hasClass("sort-direction-2")) {
+        $(".sort-direction-2").removeClass("active");
+        thiz.addClass("active");
+    }
+    if (thiz.hasClass("sort-type-2")) {
+        $(".sort-type-2").removeClass("active");
+        thiz.addClass("active");
+    }
 
     clearListBeforeLoading();
-    $.getJSON("services/sort/" + direction + "/type/" + enc(type) + "/list/" + enc(list)
+    $.getJSON("services/sort/" + direction + "/type/" + enc(type) + "/sort/" + direction2 + "/type/" + enc(type2) + "/list/" + enc(list)
             + "/" + enc(secret), function (json) {
         addListItem(json.items);
 
@@ -834,29 +849,52 @@ $(document).ready(function(){
 
     $(".sort-box.sort-asc").on("click", function () {
         direction = 1;
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
     $(".sort-box.sort-alpha").on("click", function () {
         type = "text";
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
     $(".sort-box.sort-label").on("click", function () {
         type = "labels";
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
     $(".sort-box.sort-priority").on("click", function () {
         type = "priority";
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
     $(".sort-box.sort-time").on("click", function () {
         type = "timestamp";
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
     $(".sort-box.sort-desc").on("click", function () {
         direction = -1;
-        getListByOrder(direction, type, list, getHashVar(3), $(this));
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+
+    $(".sort-box.sort-asc-2").on("click", function () {
+        direction2 = 1;
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-alpha-2").on("click", function () {
+        type2 = "text";
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-label-2").on("click", function () {
+        type2 = "labels";
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-priority-2").on("click", function () {
+        type2 = "priority";
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-time-2").on("click", function () {
+        type2 = "timestamp";
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
+    });
+    $(".sort-box.sort-desc-2").on("click", function () {
+        direction2 = -1;
+        getListByOrder(direction, type, direction2, type2, list, getHashVar(3), $(this));
     });
 
 });
-
-
