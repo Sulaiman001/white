@@ -37,7 +37,7 @@
                                         title="Sort ascending">
                                     <i class="fa fa-sort-amount-asc"></i>
                                 </button>
-                                <button class="active sort-box sort-alpha sort-type btn btn-xs btn-primary active btn-tooltip"
+                                <button class="active sort-box sort-alpha sort-type btn btn-xs btn-primary btn-tooltip"
                                         title="Sort alpha/numeric">
                                     <i class="fa fa-book"></i>
                                 </button>
@@ -54,6 +54,32 @@
                                     <i class="fa fa-clock-o"></i>
                                 </button>
                                 <button class="btn btn-xs btn-default sort-box sort-direction sort-desc btn-tooltip"
+                                        title="Sort descending">
+                                    <i class="fa fa-sort-amount-desc"></i>
+                                </button>
+                            </div>
+                            <div id="wt-list-item-sort" class="wt-list-item-no btn-group" data-id="sort" role="group">
+                                <button class="btn btn-xs btn-default sort-box sort-direction-2 sort-asc-2 btn-tooltip"
+                                        title="Sort ascending">
+                                    <i class="fa fa-sort-amount-asc"></i>
+                                </button>
+                                <button class="sort-box sort-alpha-2 sort-type-2 btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort alpha/numeric">
+                                    <i class="fa fa-book"></i>
+                                </button>
+                                <button class="sort-box sort-label-2 sort-type-2 btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort labels alpha/numeric">
+                                    <i class="fa fa-hashtag"></i>
+                                </button>
+                                <button class="sort-box sort-priority-2 sort-type-2 btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort by priority">
+                                    <i class="fa fa-exclamation"></i>
+                                </button>
+                                <button class="sort-box sort-time-2 sort-type-2 btn btn-xs btn-primary btn-tooltip"
+                                        title="Sort by timestamp">
+                                    <i class="fa fa-clock-o"></i>
+                                </button>
+                                <button class="btn btn-xs btn-default sort-box sort-direction-2 sort-desc-2 btn-tooltip"
                                         title="Sort descending">
                                     <i class="fa fa-sort-amount-desc"></i>
                                 </button>

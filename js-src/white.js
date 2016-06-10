@@ -396,6 +396,7 @@ var init = function() {
         case "list":
             list = hashVars[2];
             loadKey = "list-" + list;
+            resetSortButtonActiveFirstLoad();
             load(list);
             seedSideBar(hashVars[3]);
             setListsLink(hashVars[3]);
@@ -561,15 +562,15 @@ var clearListBeforeLoading = function (sort) {
     $(".wt-list-item").remove();
 };
 
-var resetSortButtonActive = function () {
+var resetSortButtonActiveFirstLoad = function () {
     $(".sort-direction").removeClass("active");
     $(".sort-type").removeClass("active");
-    //$(".sort-asc").addClass("active");
-    //$(".sort-alpha").addClass("active");
+    $(".sort-asc").addClass("active");
+    $(".sort-alpha").addClass("active");
 }
 
 var load = function(list) {
-    resetSortButtonActive();
+    resetSortButtonActiveFirstLoad();
 
     clearListBeforeLoading();
     $("title").text("#" + list);
