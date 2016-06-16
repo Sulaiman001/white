@@ -6,6 +6,7 @@
     },
     "require": {
         "cboden/Ratchet": "0.3.*",
-        "slim/slim": "2.6.*"
+        "slim/slim": "2.6.*",
+        "mongofill/mongofill": "dev-master"
     }
 }
